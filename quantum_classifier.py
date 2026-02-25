@@ -23,13 +23,59 @@ load_dotenv()
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Numpy-Based Statevector Quantum Simulator (Fallback)
+#  Qiskit AER Simulator (Fallback) – Exact statevector simulation
 # ═══════════════════════════════════════════════════════════════════════════
 
-class QuantumSimulator:
+class QiskitSimulator:
     """
-    Minimal statevector quantum simulator using numpy.
-    Used as fallback when IBM Quantum hardware is unavailable.
+    Qiskit AER Statevector Simulator (primary fallback).
+    Provides exact statevector simulation when IBM hardware is unavailable.
+    Compatible with the same circuit execution as IBM QPU.
+    """
+
+    def __init__(self, num_qubits=2):
+        self.n = num_qubits
+        self.available = False
+        self.numpy_backend = None
+        
+        # Try Qiskit AER first
+        try:
+            from qiskit_aer import AerSimulator
+            self.sim = AerSimulator(method='statevector')
+            self.available = True
+            print("[Quantum] Using Qiskit AER Simulator (exact statevector)")
+        except ImportError:
+            print("[Quantum] Qiskit AER unavailable – using numpy fallback simulator")
+            self.numpy_backend = QuantumSimulatorNumpy(num_qubits)
+
+    def run_circuit(self, circuit, shots=1024):
+        """Execute circuit and return measurement counts."""
+        if self.available:
+            try:
+                from qiskit import transpile
+                transpiled = transpile(circuit, self.sim)
+                job = self.sim.run(transpiled, shots=shots)
+                result = job.result()
+                counts = result.get_counts()
+                # Normalize Qiskit format (e.g. '0 0' → '00')
+                if counts and any(' ' in k for k in counts.keys()):
+                    counts = {k.replace(' ', ''): v for k, v in counts.items()}
+                return counts
+            except Exception as e:
+                print(f"[Quantum] Qiskit execution failed ({e}) – numpy fallback")
+                return self.numpy_backend.run_circuit_from_qiskit(circuit, shots) if self.numpy_backend else {}
+        else:
+            return self.numpy_backend.run_circuit_from_qiskit(circuit, shots) if self.numpy_backend else {}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  Numpy Fallback Simulator
+# ═══════════════════════════════════════════════════════════════════════════
+
+class QuantumSimulatorNumpy:
+    """
+    Minimal numpy statevector simulator (ultimate fallback).
+    Used only if both Qiskit AER and qiskit_aer.AerSimulator are unavailable.
     """
 
     def __init__(self, num_qubits=2):
@@ -65,11 +111,6 @@ class QuantumSimulator:
         gate = np.array([[c, -s], [s, c]], dtype=complex)
         self._apply_single(gate, q)
 
-    def rx(self, theta, q):
-        c, s = np.cos(theta / 2), np.sin(theta / 2)
-        gate = np.array([[c, -1j * s], [-1j * s, c]], dtype=complex)
-        self._apply_single(gate, q)
-
     def cx(self, ctrl, tgt):
         cnot = np.eye(self.dim, dtype=complex)
         for i in range(self.dim):
@@ -92,10 +133,23 @@ class QuantumSimulator:
             counts[lbl] = counts.get(lbl, 0) + 1
         return counts
 
-    def get_probabilities(self):
-        probs = np.abs(self.state) ** 2
-        labels = [format(i, f"0{self.n}b") for i in range(self.dim)]
-        return dict(zip(labels, probs.tolist()))
+    def run_circuit_from_qiskit(self, circuit, shots=1024):
+        """Convert a Qiskit circuit and simulate it using numpy."""
+        # Extract operations from Qiskit circuit
+        self.reset()
+        for instruction in circuit:
+            if instruction.operation.name == 'h':
+                self.h(instruction.qargs[0].index)
+            elif instruction.operation.name == 'rz':
+                angle = float(instruction.operation.params[0])
+                self.rz(angle, instruction.qargs[0].index)
+            elif instruction.operation.name == 'ry':
+                angle = float(instruction.operation.params[0])
+                self.ry(angle, instruction.qargs[0].index)
+            elif instruction.operation.name == 'cx':
+                ctrl, tgt = instruction.qargs[0].index, instruction.qargs[1].index
+                self.cx(ctrl, tgt)
+        return self.measure(shots)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -220,27 +274,12 @@ class QuantumRiskClassifier:
 
         return counts, job_id
 
-    # ── Numpy Simulator Execution ───────────────────────────────────────
+    # ── Qiskit Simulator Execution ──────────────────────────────────────
 
     def _run_on_simulator(self, features):
-        """Run VQC on local numpy statevector simulator."""
-        self.sim.reset()
-        # ZZFeatureMap (2 reps)
-        for _ in range(2):
-            for i in range(self.num_qubits):
-                self.sim.h(i)
-                self.sim.rz(2.0 * features[i], i)
-            self.sim.cx(0, 1)
-            self.sim.rz(2.0 * (np.pi - features[0]) * (np.pi - features[1]), 1)
-            self.sim.cx(0, 1)
-        # Ansatz
-        self.sim.ry(self.weights[0], 0)
-        self.sim.ry(self.weights[1], 1)
-        self.sim.cx(0, 1)
-        self.sim.ry(self.weights[2], 0)
-        self.sim.ry(self.weights[3], 1)
-
-        counts = self.sim.measure(shots=1024)
+        """Run VQC on Qiskit AER simulator (or numpy fallback)."""
+        qc = self._build_qiskit_circuit(features)
+        counts = self.sim.run_circuit(qc, shots=1024)
         return counts
 
     # ── Circuit Diagram ─────────────────────────────────────────────────
@@ -317,11 +356,11 @@ class QuantumRiskClassifier:
         Run quantum inference on normalised features.
 
         Strategy:
-          • Always run the noise-free numpy simulator for the **classification
-            decision** (exact statevector math — same unitaries as hardware).
-          • If IBM hardware is available, also submit to the QPU in parallel
-            to obtain a verifiable IBM Job ID.  Hardware counts are included
-            in the response for transparency but do NOT override the decision.
+          • **Primary**: Qiskit AER statevector simulator (exact, noise-free)
+          • **Fallback**: Numpy simulator if AER unavailable
+          • **Verification** (optional): Submit to real IBM Quantum hardware 
+            if IBMQ_API_KEY is set. Hardware results included for transparency
+            but do NOT override the simulator-based decision.
 
         Parameters
         ----------
@@ -335,7 +374,7 @@ class QuantumRiskClassifier:
         """
         features = np.clip(np.asarray(features, dtype=float), 0.0, 1.0)
 
-        # ── Simulator (noise-free) → used for classification decision ───
+        # ── Simulator (Qiskit AER → numpy fallback) → classification decision ───
         sim_counts = self._run_on_simulator(features)
         total_shots = sum(sim_counts.values())
         fraud_shots = sum(v for k, v in sim_counts.items() if k[0] == "1")
@@ -345,12 +384,12 @@ class QuantumRiskClassifier:
         # ── IBM Hardware (optional) → verification & job ID ─────────────
         job_id = None
         hw_counts = None
-        backend_used = "numpy_statevector_simulator"
+        backend_used = "qiskit_aer_simulator" if self.sim.available else "numpy_simulator"
 
         if self.use_hardware:
             try:
                 hw_counts, job_id = self._run_on_hardware(features)
-                backend_used = self.ibm_backend_name
+                backend_used = self.ibm_backend_name  # Report hardware only if successful
             except Exception as e:
                 print(f"[Quantum] Hardware verification skipped ({e})")
 
@@ -383,6 +422,13 @@ class QuantumRiskClassifier:
 
     def get_circuit_info(self):
         """Return metadata about the quantum circuit architecture."""
+        if self.use_hardware:
+            backend_info = self.ibm_backend_name
+        elif self.sim.available:
+            backend_info = "qiskit_aer_simulator"
+        else:
+            backend_info = "numpy_simulator (fallback)"
+        
         return {
             "feature_map": "ZZFeatureMap (2 reps, 2 qubits)",
             "ansatz": "RealAmplitudes (1 rep, 4 trainable parameters)",
@@ -391,7 +437,7 @@ class QuantumRiskClassifier:
             "optimizer": "COBYLA (offline, 500 iterations)",
             "total_parameters": len(self.weights),
             "hilbert_space_dimension": 2 ** self.num_qubits,
-            "backend": self.ibm_backend_name if self.use_hardware else "numpy_statevector_simulator",
+            "backend": backend_info,
             "ibm_hardware_active": self.use_hardware,
             "total_ibm_jobs": len(self.ibm_job_ids),
             "recent_job_ids": self.ibm_job_ids[-5:] if self.ibm_job_ids else [],
