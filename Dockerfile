@@ -20,16 +20,29 @@ FROM python:3.10-slim AS builder
 
 WORKDIR /build
 
-# System dependencies for building native wheels + unstructured parsing
+# Install ALL build + runtime dependencies upfront
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential gcc g++ \
-    libmagic-dev poppler-utils tesseract-ocr && \
+    build-essential gcc g++ gfortran \
+    libopenblas-dev liblapack-dev libgomp1 \
+    libmagic-dev poppler-utils tesseract-ocr \
+    git curl wget && \
     rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip, setuptools, wheel FIRST
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install requirements WITHOUT --prefix (direct to site-packages)
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt && \
-    pip install --no-cache-dir --prefix=/install "pathway[xpack-llm]==0.14.7" && \
-    pip install --no-cache-dir --prefix=/install sentence-transformers>=2.2.0
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install pathway (with retry for network resilience)
+RUN pip install --no-cache-dir "pathway[xpack-llm]>=0.14.0" || \
+    pip install --no-cache-dir "pathway[xpack-llm]==0.14.7" || \
+    pip install --no-cache-dir pathway || echo "Pathway optional - will use compat layer"
+
+# Install sentence-transformers (with longer timeout for download)
+RUN pip install --no-cache-dir --default-timeout=1000 "sentence-transformers>=2.2.0" || \
+    echo "Sentence-transformers optional - will use BM25 fallback"
 
 # ── Stage 2: Runtime ───────────────────────────────────────────────────
 FROM python:3.10-slim AS runtime
@@ -39,12 +52,14 @@ LABEL description="Quantum-Enhanced Fraud Detection — Hack For Green Bharat"
 
 WORKDIR /app
 
-# Copy installed Python packages from builder
-COPY --from=builder /install /usr/local
+# Copy ALL site-packages from builder (where pip installed everything)
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Runtime libraries needed by unstructured / xPack parsers
+# Install ONLY runtime libraries (not build tools)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libmagic1 poppler-utils tesseract-ocr && \
+    libmagic1 poppler-utils tesseract-ocr \
+    libopenblas0 liblapack3 libgomp1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Create data directories
