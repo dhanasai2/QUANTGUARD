@@ -24,10 +24,10 @@ litellm>=1.0.0
 # Sentence Transformers — Embedding-based RAG retrieval
 sentence-transformers>=2.2.0
 
-# Quantum Computing (Optional - numpy-based simulator included as fallback)
-# qiskit>=1.0.0
-# qiskit-aer>=0.14.0
-# qiskit-ibm-runtime>=0.20.0
+# Quantum Computing (Qiskit AER Simulator + IBM Runtime)
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+qiskit-ibm-runtime>=0.20.0
 
 # Kafka Streaming (Optional - pipeline works without it)
 kafka-python>=2.0.2
