@@ -28,21 +28,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl wget && \
     rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip, setuptools, wheel FIRST
+# Use minimal requirements to avoid OpenTelemetry resolution issues  
+COPY requirements-minimal.txt ./
+
+# Upgrade pip FIRST
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# Install requirements WITHOUT --prefix (direct to site-packages)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install core deps from minimal requirements
+RUN pip install --no-cache-dir --use-deprecated=legacy-resolver -r requirements-minimal.txt
 
-# Install pathway (with retry for network resilience)
-RUN pip install --no-cache-dir "pathway[xpack-llm]>=0.14.0" || \
-    pip install --no-cache-dir "pathway[xpack-llm]==0.14.7" || \
-    pip install --no-cache-dir pathway || echo "Pathway optional - will use compat layer"
+# Try to install pathway + sentence-transformers (optional, graceful fail)
+RUN pip install --no-cache-dir --default-timeout=1000 \
+    "pathway[xpack-llm]>=0.14.0" 2>/dev/null || \
+    pip install --no-cache-dir "pathway>=0.14.0" 2>/dev/null || \
+    echo "⚠ Pathway unavailable - will use compat layer"
 
-# Install sentence-transformers (with longer timeout for download)
-RUN pip install --no-cache-dir --default-timeout=1000 "sentence-transformers>=2.2.0" || \
-    echo "Sentence-transformers optional - will use BM25 fallback"
+RUN pip install --no-cache-dir --default-timeout=2000 \
+    "sentence-transformers>=2.2.0" 2>/dev/null || \
+    echo "⚠ Sentence-transformers unavailable - will use BM25 fallback"
 
 # ── Stage 2: Runtime ───────────────────────────────────────────────────
 FROM python:3.10-slim AS runtime

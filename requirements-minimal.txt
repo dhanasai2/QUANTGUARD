@@ -1,0 +1,40 @@
+# QuantGuard Minimal Requirements (for Render.com Docker builds)
+# This avoids complex OpenTelemetry dependency resolution
+# Use: COPY requirements-minimal.txt requirements.txt in Dockerfile
+
+# Core API
+fastapi==0.109.0
+uvicorn==0.27.0
+pydantic==2.5.0
+httpx==0.25.2
+starlette==0.35.0
+
+# Data processing
+numpy==1.24.3
+pandas==2.1.3
+scipy==1.11.4
+
+# LLM integrations
+groq==0.4.3
+litellm==1.3.0
+
+# Quantum
+qiskit==0.43.0
+qiskit-ibm-runtime==0.19.0
+
+# Messaging
+kafka-python==2.0.2
+
+# Async
+aiohttp==3.9.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# Optional: Pathway (may fail on Render, falls back to compat layer)
+# pathway[xpack-llm]>=0.14.0
+
+# Optional: Embeddings (may fail on Render, falls back to BM25)  
+# sentence-transformers>=2.2.0
