@@ -1,0 +1,38 @@
+QUANTGUARD FINANCIAL FRAUD DETECTION POLICY v2.1
+
+1. TRANSACTION MONITORING THRESHOLDS
+- Standard transactions: $0 - $2,000 (Low Risk)
+- Elevated transactions: $2,000 - $4,000 (Medium Risk)
+- High-value transactions: $4,000+ (High Risk - requires enhanced verification)
+- Micro-transaction clusters: 10+ transactions under $50 within 1 hour (Potential structuring)
+
+2. GEOGRAPHIC ANOMALY RULES
+- Transactions from different countries within 2 hours: Flag for review
+- First-time transactions from high-risk jurisdictions: Enhanced due diligence required
+- Location mismatch with user registered address: Medium risk flag
+- Impossible travel: Transactions from distant cities within short time frames
+
+3. VELOCITY CHECKS
+- More than 5 transactions per user per hour: Velocity alert
+- Transaction amount exceeding 2.5x rolling 24-hour average: Spike alert
+- Consecutive declined transactions followed by approval: Potential card testing
+- Rapid-fire small transactions: Potential structuring or bot activity
+
+4. CATEGORY-SPECIFIC RULES
+- Electronics purchases over $3,000: Enhanced verification required
+- Travel bookings from new locations: Geographic risk assessment
+- Healthcare transactions at unusual hours: Temporal anomaly flag
+- Entertainment spending spikes: Behavioral deviation alert
+- Cross-category rapid spending: Profile deviation flag
+
+5. QUANTUM RISK SCORING THRESHOLDS
+- Quantum fraud probability above 0.70: CRITICAL - Immediate transaction hold
+- Quantum fraud probability 0.45-0.70: HIGH - Enhanced monitoring and analyst review
+- Quantum fraud probability 0.25-0.45: MEDIUM - Flagged for pattern analysis
+- Quantum fraud probability below 0.25: LOW - Standard processing continues
+
+6. PATTERN RECOGNITION
+- Account takeover indicators: Password change followed by high-value transaction
+- Synthetic identity fraud: New account with immediate high spending
+- Bust-out fraud: Gradual credit increase followed by maximum utilization
+- Money mule activity: Rapid fund transfers across multiple accounts

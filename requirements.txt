@@ -1,0 +1,41 @@
+# QuantGuard - Real-Time Quantum-Enhanced Fraud Detection
+# Core Dependencies
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-dotenv>=1.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+groq>=0.4.0
+websockets>=12.0
+aiohttp>=3.9.0
+
+# Live Market Data (Alpha Vantage / Polygon.io)
+# Alpha Vantage: free API key at https://www.alphavantage.co/support/#api-key
+# Polygon.io: free API key at https://polygon.io/dashboard/signup
+
+# Pathway - Real-Time Streaming Engine (Linux/macOS only)
+# On Windows, the compatibility layer (pathway_compat.py) is used automatically
+pathway[xpack-llm]>=0.14.0
+# pip install "pathway[xpack-llm]"   # For native Pathway LLM xPack
+
+# LiteLLM — Multi-provider LLM gateway (Groq via native Pathway xPack LLMs)
+litellm>=1.0.0
+
+# Sentence Transformers — Embedding-based RAG retrieval
+sentence-transformers>=2.2.0
+
+# Quantum Computing (Optional - numpy-based simulator included as fallback)
+# qiskit>=1.0.0
+# qiskit-aer>=0.14.0
+# qiskit-ibm-runtime>=0.20.0
+
+# Kafka Streaming (Optional - pipeline works without it)
+kafka-python>=2.0.2
+
+# Testing
+pytest>=8.0.0
+httpx>=0.27.0
+
+# RAGAS Evaluation (pip install to run evaluate_rag.py)
+# ragas>=0.1.0
+# datasets>=2.0.0

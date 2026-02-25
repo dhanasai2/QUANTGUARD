@@ -1,0 +1,16 @@
+# QuantGuard Docker Ignore
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env
+.git/
+*.pdf
+DOC-*.pdf
+data/ml_output.log
+data/high_risk_alerts.jsonl
+data/persistence/
+*.egg-info/
+dist/
+build/
+.mypy_cache/

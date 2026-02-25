@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuantGuard — Quantum-Enhanced Fraud Detection for Green Bharat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+} }
+</script>
+<style>
+/* ═══ Reset & Variables ═══ */
+:root{
+  --bg:#050510;--bg2:#080820;--card:rgba(255,255,255,0.028);--card-hover:rgba(255,255,255,0.045);
+  --border:rgba(255,255,255,0.06);--border-h:rgba(0,212,255,0.18);
+  --cyan:#00d4ff;--purple:#7c3aed;--indigo:#6366f1;--red:#ef4444;--orange:#f97316;--yellow:#eab308;--green:#22c55e;--emerald:#10b981;
+  --text:#e2e8f0;--muted:#64748b;--dim:#334155;
+  --glow-c:0 0 25px rgba(0,212,255,0.12);--glow-p:0 0 25px rgba(124,58,237,0.10);
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Fira Code',monospace;
+  --radius:14px;--radius-sm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::selection{background:rgba(0,212,255,0.2)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:4px}::-webkit-scrollbar-track{background:transparent}
+
+/* ═══ Particle Canvas ═══ */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ═══ Layout Container ═══ */
+.app{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:0 1.5rem 3rem}
+
+/* ═══ Header ═══ */
+header{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:1.2rem;position:sticky;top:0;z-index:50;background:rgba(5,5,16,0.82);backdrop-filter:blur(20px);margin-left:-1.5rem;margin-right:-1.5rem;padding-left:1.5rem;padding-right:1.5rem}
+.logo{display:flex;align-items:baseline;gap:8px}
+.logo h1{font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo span{font-size:.7rem;color:var(--muted);letter-spacing:.5px;font-weight:500}
+.hdr-badges{display:flex;align-items:center;gap:1rem}
+.hw-badge{font-size:.68rem;padding:3px 10px;border-radius:20px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);color:var(--purple);font-weight:600;transition:all .3s}
+.ws-badge{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red);transition:all .4s}.dot.ok{background:var(--green);box-shadow:0 0 8px var(--green)}
+
+/* ═══ Stats Row ═══ */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem;margin-bottom:1.2rem}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;transition:all .3s;cursor:default}
+.stat:hover{border-color:var(--border-h);box-shadow:var(--glow-c);background:var(--card-hover)}
+.stat h4{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.35rem;font-weight:600}
+.stat .val{font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+.stat .val.sm{font-size:.82rem;font-weight:600;line-height:1.45}
+
+/* ═══ Feeds Grid ═══ */
+.feeds{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-bottom:1.2rem}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;transition:border-color .3s}
+.fcard:hover{border-color:var(--border-h)}
+.fcard h3{font-size:.85rem;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.feed{max-height:280px;overflow-y:auto;scrollbar-width:thin}
+.fi{padding:.5rem .4rem;border-bottom:1px solid rgba(255,255,255,0.025);font-size:.74rem;line-height:1.5;animation:slideIn .35s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* ═══ Log Anomaly Severity Colors ═══ */
+.sev-critical{color:#ff4757;font-weight:800}
+.sev-high{color:#ffa502;font-weight:700}
+.sev-medium{color:#ffd43b;font-weight:600}
+.sev-low{color:var(--muted);font-weight:500}
+.log-svc{display:inline-block;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:3px;padding:0 4px;font-size:.68rem;color:var(--cyan);margin-right:4px}
+.log-metric{font-size:.66rem;color:var(--muted)}
+.log-summary{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.log-chip{font-size:.62rem;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,0.04);border:1px solid var(--border)}
+.log-chip b{color:var(--cyan)}
+
+/* ═══ Analysis Section ═══ */
+.analysis{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem;margin-bottom:1.2rem}
+.analysis>h2{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.analysis>h2 span{font-size:.65rem;color:var(--muted);font-weight:500}
+.input-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:.6rem;align-items:end;margin-bottom:1rem}
+.field label{display:block;font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600}
+.field input{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .7rem;color:var(--text);font-size:.82rem;font-family:var(--font);transition:all .2s}
+.field input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 12px rgba(0,212,255,0.08);background:rgba(0,212,255,0.02)}
+.btn{background:linear-gradient(135deg,var(--cyan),var(--purple));border:none;border-radius:var(--radius-sm);padding:.6rem 1.6rem;color:#fff;font-weight:700;cursor:pointer;font-size:.82rem;font-family:var(--font);transition:all .2s;white-space:nowrap;box-shadow:0 4px 15px rgba(0,212,255,0.2)}
+.btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,255,0.3)}.btn:active{transform:translateY(0)}.btn:disabled{opacity:.3;cursor:default;transform:none}
+
+/* ═══ Result Container ═══ */
+.result{display:none;margin-top:1rem;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.result-hdr{display:flex;align-items:center;gap:1.2rem;padding:1rem 1.3rem;border-radius:var(--radius);background:rgba(0,0,0,0.35);border:1px solid var(--border);margin-bottom:.8rem;flex-wrap:wrap}
+.risk-gauge-wrap{flex-shrink:0}
+.risk-gauge svg{width:100px;height:100px}
+.gauge-track{fill:none;stroke:rgba(255,255,255,0.04);stroke-width:8}
+.gauge-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1),stroke .4s}
+.risk-info{flex:1;min-width:200px}
+.risk-info .classification{font-size:1.3rem;font-weight:900;margin-bottom:2px}
+.risk-info .meta{font-size:.72rem;color:var(--muted);line-height:1.6}
+.risk-info .meta b{color:var(--text)}
+.risk-tag{display:inline-block;font-size:.72rem;font-weight:800;padding:3px 12px;border-radius:6px;margin-left:auto}
+.risk-tag.CRITICAL{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.risk-tag.HIGH{background:rgba(249,115,22,0.12);color:var(--orange);border:1px solid rgba(249,115,22,0.25)}
+.risk-tag.MEDIUM{background:rgba(234,179,8,0.12);color:var(--yellow);border:1px solid rgba(234,179,8,0.25)}
+.risk-tag.LOW{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25)}
+
+/* ═══ Result Grid ═══ */
+.rgrid{display:grid;gap:.8rem}
+.rpanel{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;overflow:hidden;transition:border-color .3s}
+.rpanel:hover{border-color:var(--border-h)}
+.rpanel h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:.7rem;font-weight:700;display:flex;align-items:center;gap:5px}
+
+/* ═══ Circuit Panel ═══ */
+.circuit-wrap{overflow-x:auto;padding:.5rem;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);border:1px solid rgba(0,212,255,0.04)}
+.circuit-svg{width:100%;min-width:700px;height:auto;display:block}
+.circuit-svg text{user-select:none}
+@keyframes gateIn{from{opacity:0}to{opacity:1}}
+.gate-legend{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:.62rem;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+
+/* ═══ Bloch + Probs Row ═══ */
+.bloch-probs{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.bloch-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.bloch-cell{text-align:center}
+.bloch-canvas{width:100%;height:260px;border-radius:var(--radius-sm);overflow:hidden;background:rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.03);position:relative}
+.bloch-canvas canvas{display:block}
+.bloch-lbl{font-size:.68rem;color:var(--muted);margin-top:.4rem;font-weight:600}
+.bloch-angle{font-family:var(--mono);font-size:.65rem;color:var(--cyan)}
+.bloch-placeholder{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);font-size:.75rem;flex-direction:column;gap:.8rem}
+.ent-badge{display:inline-flex;align-items:center;gap:6px;margin-top:.6rem;padding:.4rem .8rem;border-radius:8px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.12);font-size:.72rem;color:var(--purple);font-weight:600}
+.ent-badge .ent-val{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ═══ Probability Bars ═══ */
+.prob-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.prob-label{width:36px;text-align:right;font-family:var(--mono);font-size:.72rem;color:var(--cyan);font-weight:600;flex-shrink:0}
+.prob-bg{flex:1;height:24px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden;position:relative}
+.prob-fill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.prob-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);animation:shimmer 2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.prob-fill.s00{background:linear-gradient(90deg,#22c55e,#10b981)}
+.prob-fill.s01{background:linear-gradient(90deg,#00d4ff,#6366f1)}
+.prob-fill.s10{background:linear-gradient(90deg,#f97316,#ef4444)}
+.prob-fill.s11{background:linear-gradient(90deg,#7c3aed,#ec4899)}
+.prob-pct{width:52px;text-align:right;font-family:var(--mono);font-size:.7rem;font-weight:600;flex-shrink:0}
+.features-row{display:flex;gap:1rem;margin-top:.7rem;padding:.5rem .6rem;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.03)}
+.feat{font-size:.68rem;color:var(--muted)}.feat b{color:var(--cyan);font-family:var(--mono)}
+
+/* ═══ LLM Panel ═══ */
+.llm-text{font-size:.78rem;line-height:1.65;color:var(--text);max-height:250px;overflow-y:auto;padding:.2rem}
+
+/* ═══ Gate Pills ═══ */
+.gpills{display:flex;flex-wrap:wrap;gap:3px;margin-top:.6rem}
+.gp{font-size:.58rem;padding:2px 7px;border-radius:5px;font-family:var(--mono);font-weight:600;border:1px solid;transition:transform .15s}
+.gp:hover{transform:scale(1.08)}
+.gp.h{background:rgba(0,212,255,0.06);border-color:rgba(0,212,255,0.15);color:var(--cyan)}
+.gp.rz{background:rgba(99,102,241,0.06);border-color:rgba(99,102,241,0.15);color:var(--indigo)}
+.gp.ry{background:rgba(34,197,94,0.06);border-color:rgba(34,197,94,0.15);color:var(--green)}
+.gp.cx{background:rgba(124,58,237,0.06);border-color:rgba(124,58,237,0.15);color:var(--purple)}
+.gp.ms{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.15);color:var(--red)}
+
+/* ═══ RAG Section ═══ */
+.rag{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.rag h3{font-size:.9rem;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.rag h3 small{font-size:.62rem;color:var(--muted);font-weight:500}
+.rag-chat{min-height:50px;max-height:260px;overflow-y:auto;padding:.3rem;margin:.5rem 0}
+.msg{margin-bottom:.6rem;line-height:1.5;font-size:.78rem;border-radius:8px;padding:.5rem .7rem}
+.msg.user{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.06)}
+.msg.ai{background:rgba(124,58,237,0.04);border:1px solid rgba(124,58,237,0.06)}
+.rag-input{display:flex;gap:.5rem}
+.rag-input input{flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .7rem;color:var(--text);font-size:.82rem;font-family:var(--font);transition:all .2s}
+.rag-input input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 10px rgba(0,212,255,0.06)}
+
+/* ═══ Quantum Loader ═══ */
+.qloader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 0;gap:1.2rem}
+.qloader-rings{width:80px;height:80px;position:relative}
+.qloader-rings .ring{position:absolute;border:2px solid transparent;border-radius:50%}
+.ring-1{inset:0;border-top-color:var(--cyan);border-bottom-color:var(--cyan);animation:qspin 1.5s linear infinite}
+.ring-2{inset:8px;border-left-color:var(--purple);border-right-color:var(--purple);animation:qspin 2s linear infinite reverse}
+.ring-3{inset:16px;border-top-color:var(--green);border-bottom-color:var(--green);animation:qspin 1s linear infinite}
+.ring-core{position:absolute;width:10px;height:10px;background:var(--cyan);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,212,255,0.25)}
+.qloader-text{color:var(--muted);font-size:.8rem;animation:pulse 1.5s ease-in-out infinite}
+@keyframes qspin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══ Green Bharat Hero Banner ═══ */
+.green-hero{background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(16,185,129,0.04),rgba(0,212,255,0.03));border:1px solid rgba(34,197,94,0.12);border-radius:var(--radius);padding:1.2rem 1.5rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.green-hero::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(34,197,94,0.06),transparent 70%);pointer-events:none}
+.green-hero-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.green-hero h2{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.green-hero h2 .accent{background:linear-gradient(135deg,var(--green),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.green-hero p{font-size:.78rem;color:var(--muted);line-height:1.65;max-width:700px;margin-top:.4rem}
+.green-hero p b{color:var(--green)}
+.green-stats{display:flex;gap:1.2rem;flex-wrap:wrap}
+.gstat{text-align:center;padding:.5rem .8rem;background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.08);border-radius:var(--radius-sm)}
+.gstat .gval{font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--emerald));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+.gstat .glbl{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;font-weight:600}
+
+/* ═══ Impact Tracker ═══ */
+.impact{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem}
+.impact h3{font-size:.85rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:6px}
+.impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.impact-card{padding:.8rem;border-radius:var(--radius-sm);border:1px solid;text-align:center;transition:all .3s}
+.impact-card:hover{transform:translateY(-2px)}
+.impact-card.green{background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.1)}
+.impact-card.blue{background:rgba(0,212,255,0.04);border-color:rgba(0,212,255,0.1)}
+.impact-card.purple{background:rgba(124,58,237,0.04);border-color:rgba(124,58,237,0.1)}
+.impact-card.amber{background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.1)}
+.impact-card .ic-icon{font-size:1.5rem;margin-bottom:.3rem}
+.impact-card .ic-val{font-size:1.3rem;font-weight:800;line-height:1.2}
+.impact-card.green .ic-val{color:var(--green)}
+.impact-card.blue .ic-val{color:var(--cyan)}
+.impact-card.purple .ic-val{color:var(--purple)}
+.impact-card.amber .ic-val{color:#f59e0b}
+.impact-card .ic-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:.15rem;font-weight:600}
+.impact-card .ic-sub{font-size:.55rem;color:var(--dim);margin-top:2px}
+
+/* ═══ Footer ═══ */
+footer{text-align:center;padding:1.5rem 0;border-top:1px solid rgba(34,197,94,0.1);margin-top:1rem}
+.tech-badges{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
+.tbadge{font-size:.58rem;padding:2px 8px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted);font-weight:600}
+.tbadge.green{background:rgba(34,197,94,0.05);border-color:rgba(34,197,94,0.15);color:var(--green)}
+footer small{color:var(--dim);font-size:.6rem}
+footer .green-msg{font-size:.68rem;color:var(--emerald);margin-bottom:.4rem;font-weight:600}
+
+/* ═══ Live Data Source Controls ═══ */
+.live-ctrl{background:linear-gradient(135deg,rgba(0,212,255,0.04),rgba(99,102,241,0.03));border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);padding:1rem 1.2rem;margin-bottom:1.2rem}
+.live-ctrl h3{font-size:.85rem;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.live-ctrl h3 small{font-size:.62rem;color:var(--muted);font-weight:500}
+.live-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.live-row select,.live-row input{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.45rem .6rem;color:var(--text);font-size:.78rem;font-family:var(--font)}
+.live-row select:focus,.live-row input:focus{outline:none;border-color:var(--cyan)}
+.live-status{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px}
+.live-status .ldot{width:8px;height:8px;border-radius:50%;background:var(--red);transition:all .3s}
+.live-status .ldot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.btn-sm{font-size:.72rem;padding:.4rem 1rem;border-radius:var(--radius-sm);border:none;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s}
+.btn-start{background:linear-gradient(135deg,var(--green),var(--emerald));color:#fff;box-shadow:0 2px 10px rgba(34,197,94,0.2)}
+.btn-start:hover{opacity:.85}.btn-start:disabled{opacity:.3;cursor:default}
+.btn-stop{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-stop:hover{background:rgba(239,68,68,0.2)}
+
+/* ═══ xPack Reports Section ═══ */
+.xpack{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem}
+.xpack h3{font-size:.85rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:6px}
+.xpack h3 small{font-size:.62rem;color:var(--muted);font-weight:500}
+.xpack-tabs{display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap}
+.xpack-tab{font-size:.68rem;padding:4px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-weight:600;transition:all .2s;font-family:var(--font)}
+.xpack-tab:hover{border-color:var(--border-h);color:var(--text)}
+.xpack-tab.active{background:rgba(0,212,255,0.06);border-color:rgba(0,212,255,0.15);color:var(--cyan)}
+.xpack-output{min-height:80px;max-height:400px;overflow-y:auto;padding:.6rem;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.03);font-size:.76rem;line-height:1.65;color:var(--text);white-space:pre-wrap}
+.xpack-btns{display:flex;gap:.5rem;margin-bottom:.7rem;flex-wrap:wrap}
+.xpack-credit{display:flex;gap:.5rem;align-items:center;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--border)}
+.xpack-credit input{flex:1;max-width:200px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.4rem .6rem;color:var(--text);font-size:.78rem;font-family:var(--font)}
+.xpack-credit input:focus{outline:none;border-color:var(--cyan)}
+
+/* ═══ Impact Timeline Chart ═══ */
+.impact-chart{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem}
+.impact-chart h3{font-size:.85rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:6px}
+.impact-chart h3 small{font-size:.62rem;color:var(--muted);font-weight:500}
+.chart-wrap{position:relative;width:100%;height:260px}
+.chart-wrap canvas{width:100%!important;height:100%!important}
+.chart-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.78rem}
+
+/* ═══ Green Bharat Methodology & Citations Panel ═══ */
+.methodology{background:linear-gradient(135deg,rgba(34,197,94,0.03),rgba(16,185,129,0.025),rgba(0,212,255,0.02));border:1px solid rgba(34,197,94,0.1);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem;transition:all .3s}
+.methodology h3{font-size:.85rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.methodology h3 small{font-size:.62rem;color:var(--muted);font-weight:500}
+.methodology h3 .toggle-arrow{transition:transform .3s;font-size:.7rem;margin-left:auto}
+.methodology h3 .toggle-arrow.open{transform:rotate(90deg)}
+.meth-body{overflow:hidden;transition:max-height .4s ease,opacity .3s ease;max-height:0;opacity:0}
+.meth-body.open{max-height:3000px;opacity:1}
+.meth-desc{font-size:.74rem;color:var(--muted);line-height:1.65;margin-bottom:1rem;max-width:800px}
+.meth-desc b{color:var(--green)}
+.meth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.7rem;margin-bottom:1rem}
+.meth-card{padding:.85rem;border-radius:var(--radius-sm);background:rgba(255,255,255,0.015);border:1px solid var(--border);transition:all .3s}
+.meth-card:hover{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.02)}
+.meth-card .mc-head{display:flex;align-items:center;gap:6px;margin-bottom:.4rem}
+.meth-card .mc-icon{font-size:1.1rem}
+.meth-card .mc-title{font-size:.78rem;font-weight:700;color:var(--text)}
+.meth-card .mc-rate{font-size:.72rem;color:var(--green);font-weight:600;font-family:var(--mono);margin-bottom:.3rem}
+.meth-card .mc-source{font-size:.62rem;color:var(--cyan);margin-bottom:.2rem}
+.meth-card .mc-source a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,212,255,0.3)}
+.meth-card .mc-source a:hover{border-bottom-color:var(--cyan)}
+.meth-card .mc-basis{font-size:.6rem;color:var(--dim);line-height:1.55}
+.sdg-row{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1rem}
+.sdg-pill{font-size:.6rem;padding:3px 10px;border-radius:16px;font-weight:600;border:1px solid;display:flex;align-items:center;gap:4px;transition:all .2s}
+.sdg-pill:hover{transform:translateY(-1px)}
+.sdg-pill.sdg6{background:rgba(0,188,212,0.06);border-color:rgba(0,188,212,0.2);color:#00bcd4}
+.sdg-pill.sdg7{background:rgba(255,193,7,0.06);border-color:rgba(255,193,7,0.2);color:#ffc107}
+.sdg-pill.sdg13{background:rgba(76,175,80,0.06);border-color:rgba(76,175,80,0.2);color:#4caf50}
+.sdg-pill.sdg15{background:rgba(139,195,74,0.06);border-color:rgba(139,195,74,0.2);color:#8bc34a}
+.sdg-pill.sdg16{background:rgba(63,81,181,0.06);border-color:rgba(63,81,181,0.2);color:#7986cb}
+.sdg-pill .sdg-target{display:none;font-size:.55rem;color:var(--muted);margin-left:4px}
+.sdg-pill:hover .sdg-target{display:inline}
+.policy-box{background:rgba(0,0,0,0.2);border:1px solid rgba(34,197,94,0.08);border-radius:var(--radius-sm);padding:.8rem;margin-bottom:.6rem}
+.policy-box h4{font-size:.72rem;font-weight:700;color:var(--green);margin-bottom:.5rem;display:flex;align-items:center;gap:5px}
+.policy-item{font-size:.62rem;color:var(--muted);line-height:1.55;padding:.15rem 0}
+.policy-item b{color:var(--text);font-weight:600}
+.nexus-box{background:rgba(239,68,68,0.03);border:1px solid rgba(239,68,68,0.08);border-radius:var(--radius-sm);padding:.8rem}
+.nexus-box h4{font-size:.72rem;font-weight:700;color:var(--red);margin-bottom:.4rem;display:flex;align-items:center;gap:5px}
+.nexus-box p{font-size:.62rem;color:var(--muted);line-height:1.55}
+.nexus-box p b{color:var(--text);font-weight:600}
+
+@media(max-width:800px){.impact-grid{grid-template-columns:1fr 1fr}.green-hero-top{flex-direction:column}.meth-grid{grid-template-columns:1fr}}
+
+/* ═══ Responsive ═══ */
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.bloch-probs{grid-template-columns:1fr}}
+@media(max-width:1100px){.feeds{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.feeds{grid-template-columns:1fr}.input-row{grid-template-columns:1fr 1fr}.bloch-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<div class="app">
+<!-- ═══ Header ═══ -->
+<header>
+  <div class="logo"><h1>🛡️ QuantGuard</h1><span>Quantum-Enhanced Fraud Detection · <b style="color:var(--green)">Hack for Green Bharat</b></span></div>
+  <div class="hdr-badges">
+    <div class="hw-badge" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.2);color:var(--green)">🌿 Green Bharat · FinTech</div>
+    <div class="hw-badge" id="hwBadge">⚛ Connecting…</div>
+    <div class="ws-badge"><div class="dot" id="wsDot"></div><span id="wsLbl">Connecting…</span></div>
+  </div>
+</header>
+
+<!-- ═══ Green Bharat Hero Banner ═══ -->
+<div class="green-hero">
+  <div class="green-hero-top">
+    <div>
+      <h2>🌍 Protecting India's <span class="accent">Green Future</span> from Financial Fraud</h2>
+      <p>Financial fraud drains <b>₹1.3 lakh crore annually</b> from India's economy — diverting critical resources from renewable energy, clean water, and sustainable infrastructure. QuantGuard uses <b>quantum computing + AI</b> to detect fraud in real time, ensuring every rupee reaches its intended purpose of building a greener, more sustainable Bharat.</p>
+    </div>
+    <div class="green-stats">
+      <div class="gstat"><div class="gval" id="gFraudBlocked">—</div><div class="glbl">Fraud Blocked</div></div>
+      <div class="gstat"><div class="gval" id="gGreenSaved">—</div><div class="glbl">Protected for<br>Green Initiatives</div></div>
+      <div class="gstat"><div class="gval" id="gCO2">—</div><div class="glbl">CO₂ Offset<br>Equivalent</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Stats ═══ -->
+<div class="stats">
+  <div class="stat"><h4>Transactions</h4><div class="val" id="sTx">–</div></div>
+  <div class="stat"><h4>Alerts</h4><div class="val" id="sAl">–</div></div>
+  <div class="stat"><h4>Alert Rate</h4><div class="val" id="sRt">–</div></div>
+  <div class="stat"><h4>Quantum Backend</h4><div class="val sm" id="sQB">–</div></div>
+  <div class="stat"><h4>LLM Engine</h4><div class="val sm" id="sLLM">–</div></div>
+</div>
+
+<!-- ═══ Feeds ═══ -->
+<div class="feeds">
+  <div class="fcard"><h3>📊 Live Transactions</h3><div class="feed" id="txF"></div></div>
+  <div class="fcard"><h3>🚨 High-Risk Alerts</h3><div class="feed" id="alF"></div></div>
+  <div class="fcard">
+    <h3>🔧 System Log Anomalies <small style="font-size:.62rem;color:var(--muted);font-weight:400;margin-left:auto" id="logCount">0 anomalies</small></h3>
+    <div class="log-summary" id="logSummary"></div>
+    <div class="feed" id="logF"></div>
+  </div>
+</div>
+
+<!-- ═══ Analysis ═══ -->
+<div class="analysis">
+  <h2>⚛️ Quantum Analysis Engine <span>— Real-time IBM Quantum + Groq LLM Pipeline</span></h2>
+  <div class="input-row">
+    <div class="field"><label>User ID</label><input id="aUid" value="USER_105" spellcheck="false"></div>
+    <div class="field"><label>Amount ($)</label><input id="aAmt" type="number" value="2500"></div>
+    <div class="field"><label>Location</label><input id="aLoc" value="Dubai"></div>
+    <div class="field"><label>Category</label><input id="aCat" value="Electronics"></div>
+    <button class="btn" id="aBtn">⚛ Analyze</button>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="aRes">
+    <!-- Risk Header -->
+    <div class="result-hdr" id="resHdr"></div>
+
+    <!-- Panels -->
+    <div class="rgrid">
+      <!-- Circuit (full width) -->
+      <div class="rpanel" id="circuitPanel">
+        <h4>🔬 Quantum Circuit — 2-Qubit Variational Quantum Classifier</h4>
+        <div class="circuit-wrap" id="circuitWrap"></div>
+        <div class="gate-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Hadamard</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--indigo)"></div>Rz Rotation</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Ry Rotation</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>CNOT</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Measure</div>
+        </div>
+        <div class="gpills" id="gatePills"></div>
+      </div>
+
+      <!-- Bloch + Probabilities (side by side) -->
+      <div class="bloch-probs">
+        <!-- Bloch Spheres -->
+        <div class="rpanel">
+          <h4>🌐 Interactive 3D Bloch Spheres <span style="font-size:.58rem;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400">(drag to rotate)</span></h4>
+          <div class="bloch-row">
+            <div class="bloch-cell">
+              <div class="bloch-canvas" id="bloch0"><div class="bloch-placeholder"><div class="qloader-rings" style="width:50px;height:50px"><div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring-core" style="width:6px;height:6px"></div></div><span style="font-size:.65rem">Awaiting analysis</span></div></div>
+              <div class="bloch-lbl">Qubit 0 · <span class="bloch-angle" id="b0a">θ = –</span></div>
+            </div>
+            <div class="bloch-cell">
+              <div class="bloch-canvas" id="bloch1"><div class="bloch-placeholder"><div class="qloader-rings" style="width:50px;height:50px"><div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring-core" style="width:6px;height:6px"></div></div><span style="font-size:.65rem">Awaiting analysis</span></div></div>
+              <div class="bloch-lbl">Qubit 1 · <span class="bloch-angle" id="b1a">θ = –</span></div>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <div class="ent-badge" id="entBadge" style="display:none">
+              <span>Entanglement Indicator:</span><span class="ent-val" id="entVal">–</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Probabilities -->
+        <div class="rpanel">
+          <h4>📊 Quantum State Distribution <span style="font-size:.58rem;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400">(1024 shots)</span></h4>
+          <div id="probBars">
+            <div style="padding:2rem 0;text-align:center;color:var(--dim);font-size:.75rem">Awaiting analysis…</div>
+          </div>
+          <div class="features-row" id="featRow" style="display:none">
+            <div class="feat">Amount Norm: <b id="fAmt">–</b></div>
+            <div class="feat">Freq Norm: <b id="fFreq">–</b></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LLM (full width) -->
+      <div class="rpanel">
+        <h4>🤖 AI Risk Analysis <span style="font-size:.58rem;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400">— Groq LLM + RAG over policy documents</span></h4>
+        <div class="llm-text" id="llmText"><span style="color:var(--dim)">AI analysis will appear here after running quantum classification…</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Sustainability Impact Tracker ═══ -->
+<div class="impact">
+  <h3>🌱 Sustainability Impact Dashboard <small style="font-size:.62rem;color:var(--muted);font-weight:500">— Real-time Green Bharat metrics · <a href="#methodology" style="color:var(--cyan);text-decoration:none;font-size:.6rem" onclick="toggleMethodology(true)">View methodology ↓</a></small></h3>
+  <div class="impact-grid" style="grid-template-columns:repeat(6,1fr)">
+    <div class="impact-card green">
+      <div class="ic-icon">🛡️</div>
+      <div class="ic-val" id="impFraud">—</div>
+      <div class="ic-lbl">Frauds Detected</div>
+      <div class="ic-sub">Quantum-verified · <a href="#methodology" onclick="toggleMethodology(true)" style="color:var(--green);text-decoration:none;font-size:.5rem">SDG 16</a></div>
+    </div>
+    <div class="impact-card green">
+      <div class="ic-icon">💰</div>
+      <div class="ic-val" id="impSaved">—</div>
+      <div class="ic-lbl">Funds Protected</div>
+      <div class="ic-sub">40% green bond eligible · <a href="https://www.sebi.gov.in" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:.5rem">SEBI 2023</a></div>
+    </div>
+    <div class="impact-card blue">
+      <div class="ic-icon">🌊</div>
+      <div class="ic-val" id="impWater">—</div>
+      <div class="ic-lbl">Clean Water</div>
+      <div class="ic-sub">₹2/L · <a href="https://washdata.org" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:.5rem">WHO/UNICEF JMP 2023</a></div>
+    </div>
+    <div class="impact-card purple">
+      <div class="ic-icon">🌳</div>
+      <div class="ic-val" id="impTrees">—</div>
+      <div class="ic-lbl">Trees Planted</div>
+      <div class="ic-sub">₹500/tree · <a href="https://www.grow-trees.com" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:.5rem">Grow-Trees / UNEP</a></div>
+    </div>
+    <div class="impact-card amber">
+      <div class="ic-icon">🏭</div>
+      <div class="ic-val" id="impCO2">—</div>
+      <div class="ic-lbl">CO₂ Offset</div>
+      <div class="ic-sub">₹1K=2.5kg · <a href="https://www.goldstandard.org" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:.5rem">Gold Standard VERs</a></div>
+    </div>
+    <div class="impact-card blue">
+      <div class="ic-icon">☀️</div>
+      <div class="ic-val" id="impSolar">—</div>
+      <div class="ic-lbl">Solar (kW)</div>
+      <div class="ic-sub">₹25K/kW · <a href="https://www.mnre.gov.in" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:.5rem">MNRE Surya Ghar</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Green Impact Timeline Chart ═══ -->
+<div class="impact-chart">
+  <h3>📈 Green Impact Timeline <small>— Cumulative sustainability over time (auto-refreshes)</small></h3>
+  <div class="chart-wrap">
+    <canvas id="impactChart"></canvas>
+    <div class="chart-empty" id="chartEmpty">⏳ Awaiting fraud detection data…</div>
+  </div>
+</div>
+
+<!-- ═══ Green Bharat Methodology & Citations ═══ -->
+<div class="methodology" id="methodology">
+  <h3 onclick="toggleMethodology()">📜 Green Bharat — Impact Methodology & Verified Citations <small>click to expand</small> <span class="toggle-arrow" id="methArrow">▶</span></h3>
+  <div class="meth-body" id="methBody">
+    <div class="meth-desc" id="methDesc">
+      QuantGuard quantifies the environmental impact of fraud prevention by calculating how <b>protected funds could be redirected to sustainability initiatives</b> under India's national green programs. Each conversion factor is sourced from <b>peer-reviewed or government-published data</b>.
+    </div>
+
+    <!-- SDG Alignment Pills -->
+    <div style="margin-bottom:.8rem">
+      <div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:.4rem">UN Sustainable Development Goals Alignment</div>
+      <div class="sdg-row" id="sdgRow">
+        <div class="sdg-pill sdg6">💧 SDG 6 <span style="font-size:.55rem;opacity:.7">Clean Water</span><span class="sdg-target">→ Jal Jeevan Mission</span></div>
+        <div class="sdg-pill sdg7">☀️ SDG 7 <span style="font-size:.55rem;opacity:.7">Clean Energy</span><span class="sdg-target">→ 500GW by 2030</span></div>
+        <div class="sdg-pill sdg13">🌍 SDG 13 <span style="font-size:.55rem;opacity:.7">Climate Action</span><span class="sdg-target">→ Net-zero 2070</span></div>
+        <div class="sdg-pill sdg15">🌳 SDG 15 <span style="font-size:.55rem;opacity:.7">Life on Land</span><span class="sdg-target">→ 33% forest cover</span></div>
+        <div class="sdg-pill sdg16">⚖️ SDG 16 <span style="font-size:.55rem;opacity:.7">Peace & Justice</span><span class="sdg-target">→ PMLA / FIU-IND</span></div>
+      </div>
+    </div>
+
+    <!-- Conversion Factor Cards (populated from API) -->
+    <div style="font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin-bottom:.4rem">Verified Conversion Factors</div>
+    <div class="meth-grid" id="methGrid">
+      <!-- CO₂ -->
+      <div class="meth-card">
+        <div class="mc-head"><span class="mc-icon">🏭</span><span class="mc-title">CO₂ Offset</span></div>
+        <div class="mc-rate">INR 1,000 → 2.5 kg CO₂</div>
+        <div class="mc-source">📄 <a href="https://www.goldstandard.org/impact-quantification/" target="_blank">Gold Standard Foundation — VERs (2024)</a></div>
+        <div class="mc-basis">Avg cost of Gold Standard-certified carbon credits in Indian voluntary market. Range: INR 300–500/tonne CO₂e.</div>
+      </div>
+      <!-- Trees -->
+      <div class="meth-card">
+        <div class="mc-head"><span class="mc-icon">🌳</span><span class="mc-title">Reforestation</span></div>
+        <div class="mc-rate">INR 500 → 1 native tree</div>
+        <div class="mc-source">📄 <a href="https://www.grow-trees.com/plant-trees-india" target="_blank">Grow-Trees.com</a> & <a href="https://www.trilliontrees.org/" target="_blank">UNEP Trillion Trees (2024)</a></div>
+        <div class="mc-basis">End-to-end cost: sapling + planting + 3-year maintenance. Species: Neem, Peepal, Banyan, Mango. NGT (2019) values 1 mature tree at ₹74,500/year in ecosystem services.</div>
+      </div>
+      <!-- Water -->
+      <div class="meth-card">
+        <div class="mc-head"><span class="mc-icon">💧</span><span class="mc-title">Clean Water</span></div>
+        <div class="mc-rate">INR 2 per litre (community RO/UV)</div>
+        <div class="mc-source">📄 <a href="https://washdata.org/" target="_blank">WHO/UNICEF JMP 2023</a> · <a href="https://jaljeevanmission.gov.in" target="_blank">Jal Jeevan Mission</a></div>
+        <div class="mc-basis">Community-scale purification amortised over 10-year lifespan. JJM target: functional tap connections to 195M+ rural households.</div>
+      </div>
+      <!-- Solar -->
+      <div class="meth-card">
+        <div class="mc-head"><span class="mc-icon">☀️</span><span class="mc-title">Solar Energy</span></div>
+        <div class="mc-rate">INR 25,000 per 1 kW rooftop</div>
+        <div class="mc-source">📄 <a href="https://www.mnre.gov.in/" target="_blank">MNRE — PM Surya Ghar Muft Bijli Yojana (2024)</a></div>
+        <div class="mc-basis">Subsidised cost after central + state subsidies. 1 kW generates ~1,400 kWh/year in India, offsetting ~1.1 tonne CO₂.</div>
+      </div>
+      <!-- Green Bonds -->
+      <div class="meth-card">
+        <div class="mc-head"><span class="mc-icon">📈</span><span class="mc-title">Green Investment</span></div>
+        <div class="mc-rate">40% of protected funds → green bonds</div>
+        <div class="mc-source">📄 <a href="https://www.sebi.gov.in/" target="_blank">SEBI Green Bond Framework 2023</a> · <a href="https://rbi.org.in" target="_blank">RBI Sovereign Green Bonds</a></div>
+        <div class="mc-basis">Conservative estimate meeting SEBI eligibility for renewable energy, clean transport, pollution prevention, and water management projects.</div>
+      </div>
+    </div>
+
+    <!-- India Policy Context -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem">
+      <div class="policy-box">
+        <h4>🇮🇳 India Climate Policy Alignment</h4>
+        <div class="policy-item"><b>NDC 2030:</b> 50% electric power from non-fossil sources (Updated NDC, Aug 2022)</div>
+        <div class="policy-item"><b>Net-Zero:</b> 2070 target (PM Modi, COP26 Glasgow, Nov 2021)</div>
+        <div class="policy-item"><b>Forest Cover:</b> 713,789 km² — 21.71% of area (FSI ISFR 2023)</div>
+        <div class="policy-item"><b>Carbon Intensity:</b> 45% reduction by 2030 vs 2005 (Paris Agreement NDC)</div>
+        <div class="policy-item" style="margin-top:.3rem;font-size:.58rem;color:var(--dim)"><b>NAPCC Missions:</b> National Solar Mission (100 GW) · Green India Mission (5M ha) · National Water Mission · Sustainable Agriculture Mission</div>
+      </div>
+      <div class="nexus-box">
+        <h4>🔗 Fraud–Environment Nexus</h4>
+        <p>Financial crime directly enables environmental destruction: <b>illegal logging, sand mining, e-waste dumping, wildlife trafficking</b>. FATF (2021) estimates money laundering from environmental crime at <b>USD 110–281 billion/year</b> globally. Every fraud prevented protects India's natural capital.</p>
+        <p style="margin-top:.4rem"><b>Source:</b> <a href="https://www.fatf-gafi.org/" target="_blank" style="color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,212,255,0.3)">FATF Report on Money Laundering from Environmental Crime, 2021</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Live Data Source Controls ═══ -->
+<div class="live-ctrl">
+  <h3>📡 Live Market Data Stream <small>(Alpha Vantage / Polygon.io / Socket / Demo)</small></h3>
+  <div class="live-row">
+    <select id="liveSrc">
+      <option value="demo" selected>🎮 Demo (Simulated Market)</option>
+      <option value="alpha">📈 Alpha Vantage (Live Stocks)</option>
+      <option value="socket">🔌 Socket / Kafka Stream</option>
+    </select>
+    <input id="liveInterval" type="number" value="1" min="0.5" max="60" step="0.5" style="width:80px" title="Interval (seconds)">
+    <span style="font-size:.65rem;color:var(--muted)">sec</span>
+    <button class="btn-sm btn-start" id="liveStartBtn" onclick="startLive()">▶ Start</button>
+    <button class="btn-sm btn-stop" id="liveStopBtn" onclick="stopLive()">■ Stop</button>
+    <div class="live-status"><div class="ldot" id="liveDot"></div><span id="liveLabel">Stopped</span></div>
+  </div>
+</div>
+
+<!-- ═══ Pathway LLM xPack — Reports & Insights ═══ -->
+<div class="xpack">
+  <h3>📋 Pathway LLM xPack <small>(Automated Reports · Explainable Insights · Live RAG)</small></h3>
+  <div class="xpack-tabs">
+    <div class="xpack-tab active" data-rtype="executive_summary" onclick="selectReport(this)">📊 Executive Summary</div>
+    <div class="xpack-tab" data-rtype="trend_analysis" onclick="selectReport(this)">📈 Trend Analysis</div>
+    <div class="xpack-tab" data-rtype="compliance_report" onclick="selectReport(this)">📜 Compliance Report</div>
+    <div class="xpack-tab" data-rtype="risk_assessment" onclick="selectReport(this)">⚠️ Risk Assessment</div>
+    <div class="xpack-tab" data-rtype="green_impact" onclick="selectReport(this)">🌍 Green Impact</div>
+  </div>
+  <div class="xpack-btns">
+    <button class="btn" id="xpackGenBtn" onclick="generateReport()">Generate Report</button>
+    <span id="xpackStatus" style="font-size:.7rem;color:var(--muted)"></span>
+  </div>
+  <div class="xpack-output" id="xpackOut">Select a report type and click Generate to create an AI-powered report from live fraud data.</div>
+  <div class="xpack-credit">
+    <input id="creditUser" placeholder="USER_100" value="USER_100">
+    <button class="btn-sm btn-start" onclick="generateCredit()">💳 Credit Rationale</button>
+    <span id="creditStatus" style="font-size:.7rem;color:var(--muted)"></span>
+  </div>
+</div>
+
+<!-- ═══ RAG ═══ -->
+<div class="rag">
+  <h3>🤖 AI Regulatory Assistant <small>(RAG over fraud policy documents)</small></h3>
+  <div class="rag-chat" id="ragC"></div>
+  <div class="rag-input">
+    <input id="ragI" placeholder="Ask about fraud policies, compliance, risk thresholds…" spellcheck="false">
+    <button class="btn" id="ragBtn">Ask AI</button>
+  </div>
+</div>
+
+<!-- ═══ Footer ═══ -->
+<footer>
+  <div class="green-msg">🌿 Every fraud detected = resources protected for a sustainable India 🇮🇳 · <a href="#methodology" onclick="toggleMethodology(true)" style="color:var(--cyan);text-decoration:none;font-size:.62rem">View Impact Methodology & Citations</a></div>
+  <div class="tech-badges">
+    <span class="tbadge green">🌍 Green Bharat</span>
+    <span class="tbadge">⚛ IBM Quantum</span>
+    <span class="tbadge">🧠 Groq LLM</span>
+    <span class="tbadge">🐍 FastAPI</span>
+    <span class="tbadge">🌊 Pathway</span>
+    <span class="tbadge">🔮 Three.js</span>
+    <span class="tbadge">📊 VQC 2-Qubit</span>
+    <span class="tbadge green">📜 Cited Sources</span>
+  </div>
+  <small>QuantGuard — Quantum-Enhanced Fraud Detection · Hack for Green Bharat Hackathon · FinTech Track</small>
+</footer>
+</div><!-- .app -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JavaScript (Module — Three.js loaded asynchronously)
+     ═══════════════════════════════════════════════════════════════ -->
+<script type="module">
+
+// ── Helpers ──────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+// ── State ────────────────────────────────────────────────────────
+let _THREE = null, _OrbitControls = null, _threeReady = false;
+let blochSpheres = { q0: null, q1: null };
+let ws = null;
+let prevStats = { tx: 0, al: 0 };
+
+// ══════════════════════════════════════════════════════════════════
+//  BOOT (runs immediately — no blocking on Three.js)
+// ══════════════════════════════════════════════════════════════════
+initParticles();
+connectWS();
+loadStats();
+loadInit();
+loadMethodology();
+setInterval(loadStats, 6000);
+loadLogStats();
+setInterval(loadLogStats, 8000);
+loadImpactChart();
+setInterval(loadImpactChart, 15000);
+
+$('aBtn').addEventListener('click', doAnalyze);
+$('ragBtn').addEventListener('click', askRag);
+$('ragI').addEventListener('keydown', e => { if (e.key === 'Enter') askRag(); });
+document.querySelectorAll('.input-row input').forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') doAnalyze(); });
+});
+window.addEventListener('resize', () => {
+  if (blochSpheres.q0) blochSpheres.q0.resize();
+  if (blochSpheres.q1) blochSpheres.q1.resize();
+});
+
+// Load Three.js in background (non-blocking)
+loadThreeJS();
+
+// ══════════════════════════════════════════════════════════════════
+//  THREE.JS LOADER
+// ══════════════════════════════════════════════════════════════════
+async function loadThreeJS() {
+  try {
+    _THREE = await import('three');
+    const mod = await import('three/addons/controls/OrbitControls.js');
+    _OrbitControls = mod.OrbitControls;
+    _threeReady = true;
+    console.log('[Three.js] Loaded ✓');
+  } catch (e) {
+    console.warn('[Three.js] Not available:', e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PARTICLE BACKGROUND
+// ══════════════════════════════════════════════════════════════════
+function initParticles() {
+  const c = $('particles'), ctx = c.getContext('2d');
+  const particles = [];
+  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for (let i = 0; i < 70; i++) {
+    particles.push({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25,
+      r: Math.random() * 1.5 + 0.5,
+      color: Math.random() > 0.5 ? '0,212,255' : '124,58,237',
+      alpha: Math.random() * 0.35 + 0.08
+    });
+  }
+  (function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = c.width; if (p.x > c.width) p.x = 0;
+      if (p.y < 0) p.y = c.height; if (p.y > c.height) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color},${p.alpha})`; ctx.fill();
+    });
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0,212,255,${0.055 * (1 - dist / 140)})`;
+          ctx.lineWidth = 0.5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  })();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  THREE.JS BLOCH SPHERE
+// ══════════════════════════════════════════════════════════════════
+function createBlochSphere(container) {
+  const T = _THREE;
+  const w = container.clientWidth || 260, h = container.clientHeight || 260;
+
+  const scene = new T.Scene();
+  const camera = new T.PerspectiveCamera(38, w / h, 0.1, 100);
+  camera.position.set(2.4, 1.7, 2.4);
+
+  const renderer = new T.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.innerHTML = '';
+  container.appendChild(renderer.domElement);
+
+  const controls = new _OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6;
+  controls.enablePan = false;
+  controls.minDistance = 2;
+  controls.maxDistance = 5;
+
+  // Wireframe sphere
+  const sMat = new T.MeshBasicMaterial({ color: 0x00d4ff, wireframe: true, transparent: true, opacity: 0.06 });
+  scene.add(new T.Mesh(new T.SphereGeometry(1, 36, 36), sMat));
+
+  // Inner fill
+  const fillMat = new T.MeshBasicMaterial({ color: 0x080820, transparent: true, opacity: 0.5 });
+  scene.add(new T.Mesh(new T.SphereGeometry(0.97, 32, 32), fillMat));
+
+  // Equatorial ring (XZ plane)
+  const eqRing = new T.Mesh(
+    new T.TorusGeometry(1, 0.006, 8, 128),
+    new T.MeshBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.35 })
+  );
+  eqRing.rotation.x = Math.PI / 2;
+  scene.add(eqRing);
+
+  // Meridian ring (XY plane)
+  scene.add(new T.Mesh(
+    new T.TorusGeometry(1, 0.004, 8, 128),
+    new T.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.15 })
+  ));
+
+  // Meridian ring (YZ plane)
+  const yzRing = new T.Mesh(
+    new T.TorusGeometry(1, 0.004, 8, 128),
+    new T.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.15 })
+  );
+  yzRing.rotation.y = Math.PI / 2;
+  scene.add(yzRing);
+
+  // Axis lines
+  function addAxis(from, to, color) {
+    const geo = new T.BufferGeometry().setFromPoints([new T.Vector3(...from), new T.Vector3(...to)]);
+    scene.add(new T.Line(geo, new T.LineBasicMaterial({ color, transparent: true, opacity: 0.5 })));
+  }
+  addAxis([0, 1.35, 0], [0, -1.35, 0], 0x888888);  // Z (|0⟩-|1⟩)
+  addAxis([1.35, 0, 0], [-1.35, 0, 0], 0x444444);  // X
+  addAxis([0, 0, 1.35], [0, 0, -1.35], 0x444444);  // Y
+
+  // Pole markers
+  const poleGeo = new T.SphereGeometry(0.04, 12, 12);
+  const northPole = new T.Mesh(poleGeo, new T.MeshBasicMaterial({ color: 0x22c55e }));
+  northPole.position.set(0, 1, 0);
+  scene.add(northPole);
+  const southPole = new T.Mesh(poleGeo, new T.MeshBasicMaterial({ color: 0xef4444 }));
+  southPole.position.set(0, -1, 0);
+  scene.add(southPole);
+
+  // Axis labels via sprites
+  function makeLabel(text, pos, color) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128; canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.font = 'bold 36px Inter, sans-serif';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 64, 32);
+    const tex = new T.CanvasTexture(canvas);
+    tex.needsUpdate = true;
+    const mat = new T.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new T.Sprite(mat);
+    sprite.scale.set(0.5, 0.25, 1);
+    sprite.position.set(...pos);
+    scene.add(sprite);
+  }
+  makeLabel('|0>', [0, 1.52, 0], '#22c55e');
+  makeLabel('|1>', [0, -1.52, 0], '#ef4444');
+  makeLabel('|+>', [1.52, 0, 0], '#00d4ff');
+  makeLabel('|->', [-1.52, 0, 0], '#00d4ff');
+
+  // State vector arrow
+  let stateDir = new T.Vector3(0, 1, 0);
+  const arrow = new T.ArrowHelper(stateDir, new T.Vector3(0, 0, 0), 1.0, 0x00ff88, 0.1, 0.06);
+  scene.add(arrow);
+
+  // State point + glow
+  const ptMat = new T.MeshBasicMaterial({ color: 0x00ff88 });
+  const statePoint = new T.Mesh(new T.SphereGeometry(0.055, 16, 16), ptMat);
+  statePoint.position.set(0, 1, 0);
+  scene.add(statePoint);
+
+  const glowMat = new T.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.2 });
+  const stateGlow = new T.Mesh(new T.SphereGeometry(0.14, 16, 16), glowMat);
+  stateGlow.position.set(0, 1, 0);
+  scene.add(stateGlow);
+
+  // Trail points
+  const trailGroup = new T.Group();
+  scene.add(trailGroup);
+
+  // Animate
+  let running = true;
+  (function animate() {
+    if (!running) return;
+    requestAnimationFrame(animate);
+    controls.update();
+    const t = Date.now() * 0.003;
+    glowMat.opacity = 0.15 + Math.sin(t) * 0.1;
+    renderer.render(scene, camera);
+  })();
+
+  return {
+    updateState(theta, phi = 0) {
+      const x = Math.sin(theta) * Math.cos(phi);
+      const y = Math.cos(theta);
+      const z = Math.sin(theta) * Math.sin(phi);
+      const dir = new T.Vector3(x, y, z).normalize();
+      arrow.setDirection(dir);
+      arrow.setLength(1.0, 0.1, 0.06);
+      statePoint.position.copy(dir);
+      stateGlow.position.copy(dir);
+
+      // Color interpolation: green→yellow→red based on theta
+      const frac = theta / Math.PI;
+      const color = new T.Color().setHSL(0.33 * (1 - frac), 0.85, 0.55);
+      arrow.setColor(color);
+      ptMat.color.copy(color);
+      glowMat.color.copy(color);
+
+      // Add trail point
+      const trailPt = new T.Mesh(
+        new T.SphereGeometry(0.02, 8, 8),
+        new T.MeshBasicMaterial({ color: color.clone(), transparent: true, opacity: 0.4 })
+      );
+      trailPt.position.copy(dir);
+      trailGroup.add(trailPt);
+      if (trailGroup.children.length > 15) {
+        const old = trailGroup.children[0];
+        trailGroup.remove(old);
+        old.geometry.dispose(); old.material.dispose();
+      }
+    },
+    resize() {
+      const w = container.clientWidth, h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    },
+    dispose() { running = false; renderer.dispose(); }
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SVG BLOCH SPHERE FALLBACK (when Three.js unavailable)
+// ══════════════════════════════════════════════════════════════════
+function blochSVGFallback(theta, label) {
+  const r = 80, cx = 100, cy = 100;
+  const ny = -Math.cos(theta), nz = Math.sin(theta);
+  const py = cy - ny * r * 0.85, px = cx + nz * r * 0.3;
+  const col = theta > Math.PI / 2 ? '#ef4444' : '#22c55e';
+  return `<svg viewBox="0 0 200 200" style="width:100%;height:100%">
+    <ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r*0.35}" fill="none" stroke="rgba(124,58,237,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="${cx}" y1="${cy-r-5}" x2="${cx}" y2="${cy+r+5}" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="${cx+6}" y="${cy-r-8}" font-size="11" fill="#22c55e" font-family="JetBrains Mono">|0⟩</text>
+    <text x="${cx+6}" y="${cy+r+14}" font-size="11" fill="#ef4444" font-family="JetBrains Mono">|1⟩</text>
+    <line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="${col}" stroke-width="2.5"/>
+    <circle cx="${px}" cy="${py}" r="5" fill="${col}"/>
+    <circle cx="${px}" cy="${py}" r="10" fill="${col}" opacity="0.15"/>
+    <text x="${cx}" y="195" text-anchor="middle" font-size="10" fill="#64748b" font-family="Inter">${label}</text>
+  </svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  QUANTUM CIRCUIT SVG RENDERER
+// ══════════════════════════════════════════════════════════════════
+function renderCircuit(gates) {
+  if (!gates || gates.length === 0) return '<div style="text-align:center;color:var(--dim);padding:1rem">No gate data</div>';
+
+  const q0y = 55, q1y = 125, gw = 46, gh = 30, stepW = 58, startX = 55;
+
+  // Group gates into time steps
+  const steps = [];
+  let cur = [], usedQ = new Set();
+  for (const g of gates) {
+    const qs = parseQ(g.qubit);
+    const multi = g.gate === 'CNOT' || g.gate === 'Measure' || qs.length > 1;
+    if (multi || qs.some(q => usedQ.has(q))) {
+      if (cur.length) steps.push(cur);
+      cur = [g]; usedQ = new Set(qs);
+    } else {
+      cur.push(g); qs.forEach(q => usedQ.add(q));
+    }
+  }
+  if (cur.length) steps.push(cur);
+
+  const totalW = startX + steps.length * stepW + 40;
+
+  // Detect section boundaries (for our specific circuit)
+  // Gates: 7 (ZZFeatureMap rep1) + 7 (rep2) + 5 (ansatz) + 1 (measure) = 20
+  // Steps: ~5 + 5 + 3 + 1 = 14
+  let sectionRanges = [];
+  if (steps.length >= 10) {
+    // Heuristic: find where H gates appear (start of feature map reps)
+    // and where Ry gates appear (start of ansatz)
+    let fmStarts = [], ansStart = -1, measStart = -1;
+    steps.forEach((step, i) => {
+      const types = step.map(g => g.gate);
+      if (types.includes('H')) fmStarts.push(i);
+      if (types.includes('Ry') && ansStart < 0) ansStart = i;
+      if (types.includes('Measure')) measStart = i;
+    });
+    if (fmStarts.length >= 2 && ansStart >= 0) {
+      sectionRanges = [
+        { label: 'ZZFeatureMap · Rep 1', start: fmStarts[0], end: fmStarts[1] - 1, color: '0,212,255' },
+        { label: 'ZZFeatureMap · Rep 2', start: fmStarts[1], end: ansStart - 1, color: '0,212,255' },
+        { label: 'RealAmplitudes Ansatz', start: ansStart, end: (measStart >= 0 ? measStart - 1 : steps.length - 1), color: '124,58,237' },
+      ];
+    }
+  }
+
+  let svg = `<svg viewBox="0 0 ${totalW} 175" preserveAspectRatio="xMinYMid meet" class="circuit-svg">`;
+  svg += `<defs><filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+
+  // Section backgrounds
+  sectionRanges.forEach(s => {
+    const x1 = startX + s.start * stepW - stepW / 2 + 2;
+    const x2 = startX + s.end * stepW + stepW / 2 - 2;
+    svg += `<rect x="${x1}" y="6" width="${x2 - x1}" height="163" rx="8" fill="rgba(${s.color},0.02)" stroke="rgba(${s.color},0.06)" stroke-width="1"/>`;
+    svg += `<text x="${(x1 + x2) / 2}" y="20" text-anchor="middle" fill="rgba(${s.color},0.35)" font-size="8.5" font-family="Inter" font-weight="600">${s.label}</text>`;
+  });
+
+  // Qubit labels
+  svg += `<text x="14" y="${q0y + 5}" fill="#00d4ff" font-size="13" font-weight="700" font-family="'JetBrains Mono'">q₀</text>`;
+  svg += `<text x="14" y="${q1y + 5}" fill="#7c3aed" font-size="13" font-weight="700" font-family="'JetBrains Mono'">q₁</text>`;
+
+  // Wire lines
+  svg += `<line x1="36" y1="${q0y}" x2="${totalW - 15}" y2="${q0y}" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>`;
+  svg += `<line x1="36" y1="${q1y}" x2="${totalW - 15}" y2="${q1y}" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>`;
+
+  // Render gates
+  const qy = { 0: q0y, 1: q1y };
+  const colors = {
+    H:  { bg: 'rgba(0,212,255,0.07)', s: '#00d4ff' },
+    Rz: { bg: 'rgba(99,102,241,0.07)', s: '#6366f1' },
+    Ry: { bg: 'rgba(34,197,94,0.07)', s: '#22c55e' },
+    Rx: { bg: 'rgba(245,158,11,0.07)', s: '#f59e0b' },
+    CNOT: { s: '#7c3aed' },
+    Measure: { bg: 'rgba(239,68,68,0.07)', s: '#ef4444' },
+  };
+
+  steps.forEach((step, si) => {
+    const x = startX + si * stepW;
+    const delay = si * 55;
+    const anim = `opacity:0;animation:gateIn .3s ease-out ${delay}ms forwards`;
+
+    step.forEach(g => {
+      if (g.gate === 'CNOT') {
+        const qs = parseQ(g.qubit);
+        const cy0 = qy[qs[0]], cy1 = qy[qs[1]];
+        svg += `<line x1="${x}" y1="${cy0}" x2="${x}" y2="${cy1}" stroke="${colors.CNOT.s}" stroke-width="2" style="${anim}" filter="url(#glow)"/>`;
+        svg += `<circle cx="${x}" cy="${cy0}" r="5" fill="${colors.CNOT.s}" style="${anim}"/>`;
+        svg += `<circle cx="${x}" cy="${cy1}" r="11" fill="none" stroke="${colors.CNOT.s}" stroke-width="2" style="${anim}"/>`;
+        svg += `<line x1="${x - 7}" y1="${cy1}" x2="${x + 7}" y2="${cy1}" stroke="${colors.CNOT.s}" stroke-width="1.5" style="${anim}"/>`;
+        svg += `<line x1="${x}" y1="${cy1 - 7}" x2="${x}" y2="${cy1 + 7}" stroke="${colors.CNOT.s}" stroke-width="1.5" style="${anim}"/>`;
+      } else if (g.gate === 'Measure') {
+        const qs = parseQ(g.qubit);
+        const c = colors.Measure;
+        qs.forEach(q => {
+          const y = qy[q];
+          svg += `<rect x="${x - gw / 2}" y="${y - gh / 2}" width="${gw}" height="${gh}" rx="5" fill="${c.bg}" stroke="${c.s}" stroke-width="1.5" style="${anim}"/>`;
+          svg += `<path d="M${x - 8} ${y + 5}A10 10 0 0 1 ${x + 8} ${y + 5}" fill="none" stroke="${c.s}" stroke-width="1.5" style="${anim}"/>`;
+          svg += `<line x1="${x}" y1="${y + 5}" x2="${x + 6}" y2="${y - 6}" stroke="${c.s}" stroke-width="1.5" style="${anim}"/>`;
+        });
+      } else {
+        const q = typeof g.qubit === 'number' ? g.qubit : parseInt(g.qubit);
+        const y = qy[q] || q0y;
+        const c = colors[g.gate] || { bg: 'rgba(255,255,255,0.04)', s: '#888' };
+        svg += `<rect x="${x - gw / 2}" y="${y - gh / 2}" width="${gw}" height="${gh}" rx="7" fill="${c.bg}" stroke="${c.s}" stroke-width="1.5" style="${anim}" filter="url(#glow)"/>`;
+        if (g.params !== null && g.params !== undefined) {
+          svg += `<text x="${x}" y="${y - 1}" text-anchor="middle" fill="${c.s}" font-size="10" font-weight="700" font-family="'JetBrains Mono'" style="${anim}">${g.gate}</text>`;
+          svg += `<text x="${x}" y="${y + 10}" text-anchor="middle" fill="${c.s}" font-size="6.5" font-family="'JetBrains Mono'" opacity="0.65" style="${anim}">${Number(g.params).toFixed(2)}</text>`;
+        } else {
+          svg += `<text x="${x}" y="${y + 4}" text-anchor="middle" fill="${c.s}" font-size="12" font-weight="800" font-family="'JetBrains Mono'" style="${anim}">${g.gate}</text>`;
+        }
+      }
+    });
+  });
+
+  // Ket labels at the end
+  const endX = totalW - 10;
+  svg += `<text x="${endX}" y="${q0y + 4}" fill="rgba(255,255,255,0.15)" font-size="10" font-family="'JetBrains Mono'">☐</text>`;
+  svg += `<text x="${endX}" y="${q1y + 4}" fill="rgba(255,255,255,0.15)" font-size="10" font-family="'JetBrains Mono'">☐</text>`;
+
+  svg += `</svg>`;
+  return svg;
+}
+
+function parseQ(qubit) {
+  if (typeof qubit === 'number') return [qubit];
+  const s = String(qubit);
+  if (s.includes('→')) return s.split('→').map(Number);
+  if (s.includes(',')) return s.split(',').map(Number);
+  return [parseInt(s) || 0];
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  RISK GAUGE SVG
+// ══════════════════════════════════════════════════════════════════
+function createGauge(prob) {
+  const circumference = 2 * Math.PI * 42;
+  const offset = circumference * (1 - prob);
+  const color = prob > 0.7 ? '#ef4444' : prob > 0.45 ? '#f97316' : prob > 0.25 ? '#eab308' : '#22c55e';
+  return `<svg viewBox="0 0 120 120" class="risk-gauge">
+    <circle cx="60" cy="60" r="42" class="gauge-track" stroke-width="8"/>
+    <circle cx="60" cy="60" r="42" class="gauge-fill" stroke="${color}" stroke-width="8"
+      stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+      transform="rotate(-90 60 60)"/>
+    <text x="60" y="54" text-anchor="middle" fill="${color}" font-size="22" font-weight="900" font-family="Inter">${(prob * 100).toFixed(1)}%</text>
+    <text x="60" y="70" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="Inter" font-weight="600">FRAUD PROB.</text>
+  </svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  WEBSOCKET
+// ══════════════════════════════════════════════════════════════════
+function connectWS() {
+  ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onopen = () => { $('wsDot').classList.add('ok'); $('wsLbl').textContent = 'Live'; };
+  ws.onclose = () => { $('wsDot').classList.remove('ok'); $('wsLbl').textContent = 'Reconnecting…'; setTimeout(connectWS, 3000); };
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.type === 'alert') addAlert(m.data);
+    else if (m.type === 'transaction') addTx(m.data);
+    else if (m.type === 'log_anomaly') addLogAnomaly(m.data);
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  FEED HANDLERS
+// ══════════════════════════════════════════════════════════════════
+function addTx(t) {
+  const f = $('txF'), el = document.createElement('div');
+  el.className = 'fi';
+  const flag = t.is_suspicious_flag ? '🚨' : '✅';
+  el.innerHTML = `${flag} <b>${esc(t.user_id)}</b> · <b>$${Number(t.amount).toFixed(2)}</b> · ${esc(t.location)} · ${esc(t.category)}`;
+  f.prepend(el);
+  if (f.children.length > 60) f.lastChild.remove();
+}
+
+function addAlert(a) {
+  const f = $('alF'), el = document.createElement('div');
+  el.className = 'fi';
+  const r = a.risk_level || 'HIGH';
+  const q = a.quantum_classification || 'N/A';
+  const p = ((a.quantum_fraud_probability || 0) * 100).toFixed(1);
+  el.innerHTML = `<span style="font-weight:800;color:var(--${r === 'CRITICAL' ? 'red' : r === 'HIGH' ? 'orange' : 'yellow'})">[${r}]</span> <b>${esc(a.user_id)}</b> · <b>$${Number(a.amount).toFixed(2)}</b> · ${esc(a.location)}<br><small style="color:var(--muted)">Quantum: ${q} (${p}%)${a.anomaly_reasons ? ' · ' + a.anomaly_reasons.join('; ') : ''}</small>`;
+  f.prepend(el);
+  if (f.children.length > 60) f.lastChild.remove();
+}
+
+function addLogAnomaly(d) {
+  const f = $('logF'), el = document.createElement('div');
+  el.className = 'fi';
+  const sev = (d.severity || 'medium').toLowerCase();
+  const sevCls = sev === 'critical' ? 'sev-critical' : sev === 'high' ? 'sev-high' : sev === 'medium' ? 'sev-medium' : 'sev-low';
+  const svc = esc(d.service || 'unknown');
+  const errRate = d.error_rate != null ? (d.error_rate * 100).toFixed(1) + '%' : '—';
+  const latency = d.avg_latency_ms != null ? d.avg_latency_ms.toFixed(0) + 'ms' : '—';
+  const reasons = d.reasons ? d.reasons.map(r => esc(r)).join('; ') : '';
+  el.innerHTML = `<span class="${sevCls}">[${sev.toUpperCase()}]</span> <span class="log-svc">${svc}</span>` +
+    `<span class="log-metric">err ${errRate} · lat ${latency}</span>` +
+    (reasons ? `<br><small style="color:var(--muted)">${reasons}</small>` : '');
+  f.prepend(el);
+  if (f.children.length > 80) f.lastChild.remove();
+  // update counter
+  const cnt = f.children.length;
+  $('logCount').textContent = cnt + ' anomal' + (cnt === 1 ? 'y' : 'ies');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  GREEN BHARAT METHODOLOGY TOGGLE
+// ══════════════════════════════════════════════════════════════════
+function toggleMethodology(forceOpen) {
+  const body = $('methBody');
+  const arrow = $('methArrow');
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  if (forceOpen && isOpen) {
+    // Already open — just scroll to it
+    document.getElementById('methodology')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  if (forceOpen || !isOpen) {
+    body.classList.add('open');
+    arrow.classList.add('open');
+    setTimeout(() => {
+      document.getElementById('methodology')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  } else {
+    body.classList.remove('open');
+    arrow.classList.remove('open');
+  }
+}
+// Auto-fetch methodology data from API on load (enriches the static HTML if API adds new fields)
+async function loadMethodology() {
+  try {
+    const m = await (await fetch('/api/green-impact/methodology')).json();
+    // Update SDG pills with India targets from API
+    if (m.sdg_mapping) {
+      const row = $('sdgRow');
+      if (row) {
+        row.innerHTML = m.sdg_mapping.map(s => {
+          const cls = 'sdg' + s.sdg.replace('SDG ','');
+          const icons = {'SDG 6':'💧','SDG 7':'☀️','SDG 13':'🌍','SDG 15':'🌳','SDG 16':'⚖️'};
+          return `<div class="sdg-pill ${cls}">${icons[s.sdg]||'🎯'} ${s.sdg} <span style="font-size:.55rem;opacity:.7">${s.title}</span><span class="sdg-target">→ ${s.india_target}</span></div>`;
+        }).join('');
+      }
+    }
+  } catch (e) { /* static HTML fallback is already present */ }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  STATS & INITIAL DATA
+// ══════════════════════════════════════════════════════════════════
+async function loadStats() {
+  try {
+    const r = await (await fetch('/api/stats')).json();
+    animateNum($('sTx'), prevStats.tx, r.total_transactions);
+    animateNum($('sAl'), prevStats.al, r.total_alerts);
+    prevStats.tx = r.total_transactions;
+    prevStats.al = r.total_alerts;
+    $('sRt').textContent = r.alert_rate + '%';
+    const bk = r.quantum_backend || 'simulator';
+    const hw = r.ibm_hardware_active;
+    $('sQB').innerHTML = (hw ? '⚛️ ' : '💻 ') + bk;
+    $('hwBadge').textContent = hw ? '⚛ IBM: ' + bk : '💻 Simulator';
+    $('hwBadge').style.borderColor = hw ? 'rgba(0,212,255,0.35)' : 'rgba(255,255,255,0.08)';
+    $('hwBadge').style.color = hw ? 'var(--cyan)' : 'var(--muted)';
+    // LLM Engine (dynamic from API)
+    if (r.llm_model) $('sLLM').innerHTML = '🧠 ' + r.llm_model.replace(/\(.*\)/, '').trim();
+    // Green Bharat impact — computed entirely from server data
+    if (r.sustainability) {
+      const s = r.sustainability;
+      const inr = s.funds_protected_inr || 0;
+      $('gFraudBlocked').textContent = '₹' + fmtINR(inr);
+      $('gGreenSaved').textContent = '₹' + fmtINR(s.green_redirect_potential_inr || s.green_redirect_inr || 0);
+      const co2 = s.co2_offset_kg || 0;
+      $('gCO2').textContent = co2 >= 1000 ? (co2/1000).toFixed(1) + ' T' : co2.toFixed(0) + ' kg';
+      $('impFraud').textContent = (s.frauds_detected || 0).toLocaleString();
+      $('impSaved').textContent = '₹' + fmtINR(inr);
+      const w = s.clean_water_liters || 0;
+      $('impWater').textContent = w >= 1e6 ? (w/1e6).toFixed(1) + 'M L' : w >= 1000 ? (w/1000).toFixed(0) + 'K L' : w + ' L';
+      $('impTrees').textContent = (s.trees_equivalent || 0).toLocaleString();
+      // CO₂ + Solar panels (new metrics)
+      const impCO2 = $('impCO2');
+      if (impCO2) impCO2.textContent = co2 >= 1000 ? (co2/1000).toFixed(1) + ' T' : co2.toFixed(0) + ' kg';
+      const solar = s.solar_panels_kw || 0;
+      const impSolar = $('impSolar');
+      if (impSolar) impSolar.textContent = solar >= 1000 ? (solar/1000).toFixed(1) + ' MW' : solar.toFixed(1) + ' kW';
+    }
+  } catch (e) { /* retry on next interval */ }
+}
+
+function fmtINR(n) {
+  if (n >= 1e7) return (n / 1e7).toFixed(1) + ' Cr';
+  if (n >= 1e5) return (n / 1e5).toFixed(1) + ' L';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return Math.round(n).toLocaleString();
+}
+
+function animateNum(el, from, to) {
+  if (from === to) { el.textContent = to.toLocaleString(); return; }
+  const start = performance.now();
+  const dur = 600;
+  (function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * ease).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  })(performance.now());
+}
+
+async function loadInit() {
+  try {
+    const [tx, al, logs] = await Promise.all([
+      fetch('/api/transactions?limit=30').then(r => r.json()),
+      fetch('/api/alerts?limit=30').then(r => r.json()),
+      fetch('/api/logs/alerts?limit=30').then(r => r.json()).catch(() => ({ alerts: [] })),
+    ]);
+    tx.transactions.forEach(addTx);
+    al.alerts.forEach(addAlert);
+    (logs.alerts || []).forEach(addLogAnomaly);
+  } catch (e) { /* ignore */ }
+}
+
+async function loadLogStats() {
+  try {
+    const s = await (await fetch('/api/logs/stats')).json();
+    const sum = $('logSummary');
+    sum.innerHTML = `<span class="log-chip">Total <b>${s.total_anomalies}</b></span>` +
+      `<span class="log-chip" style="border-color:rgba(255,71,87,0.3)">Critical <b>${s.by_severity?.critical || 0}</b></span>` +
+      `<span class="log-chip" style="border-color:rgba(255,165,2,0.3)">High <b>${s.by_severity?.high || 0}</b></span>` +
+      `<span class="log-chip" style="border-color:rgba(255,212,59,0.3)">Medium <b>${s.by_severity?.medium || 0}</b></span>`;
+  } catch (e) { /* retry on next interval */ }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ON-DEMAND ANALYSIS
+// ══════════════════════════════════════════════════════════════════
+async function doAnalyze() {
+  const btn = $('aBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;border-radius:50%;animation:qspin .5s linear infinite;vertical-align:middle;margin-right:6px"></span>Running…';
+
+  const rc = $('aRes');
+  rc.style.display = 'block';
+  $('resHdr').innerHTML = `<div class="qloader"><div class="qloader-rings"><div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring ring-3"></div><div class="ring-core"></div></div><div class="qloader-text">Executing quantum circuit + AI analysis…</div></div>`;
+  $('circuitWrap').innerHTML = '';
+  $('gatePills').innerHTML = '';
+  $('probBars').innerHTML = '<div style="padding:1.5rem 0;text-align:center;color:var(--dim);font-size:.75rem">Processing…</div>';
+  $('llmText').innerHTML = '<span style="color:var(--dim)">Generating AI analysis…</span>';
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: $('aUid').value,
+        amount: +$('aAmt').value,
+        location: $('aLoc').value,
+        category: $('aCat').value,
+      }),
+    });
+    const j = await res.json();
+    const risk = j.risk_level;
+    const qr = j.quantum_result || {};
+    const sa = qr.state_analysis || {};
+    const fp = qr.fraud_probability || 0;
+
+    // ── Risk Header ──
+    $('resHdr').innerHTML = `
+      <div class="risk-gauge-wrap">${createGauge(fp)}</div>
+      <div class="risk-info">
+        <div class="classification" style="color:var(--${risk === 'CRITICAL' ? 'red' : risk === 'HIGH' ? 'orange' : risk === 'MEDIUM' ? 'yellow' : 'green'})">${qr.classification || 'N/A'} DETECTED</div>
+        <div class="meta">
+          Backend: <b>${qr.backend || 'simulator'}</b> · Shots: <b>${qr.total_shots || 1024}</b> · Gates: <b>${qr.total_gates || '–'}</b> · Qubits: <b>${qr.num_qubits || 2}</b>
+          ${qr.ibm_job_id ? '<br>IBM Job: <b>' + qr.ibm_job_id + '</b>' : ''}
+        </div>
+      </div>
+      <span class="risk-tag ${risk}">${risk}</span>`;
+
+    // ── Circuit SVG ──
+    $('circuitWrap').innerHTML = renderCircuit(qr.gate_sequence);
+
+    // ── Gate Pills ──
+    const gates = qr.gate_sequence || [];
+    $('gatePills').innerHTML = gates.map(g => {
+      const cls = g.gate === 'H' ? 'h' : g.gate === 'Rz' ? 'rz' : g.gate === 'Ry' ? 'ry' : g.gate === 'CNOT' ? 'cx' : g.gate === 'Measure' ? 'ms' : '';
+      const param = g.params != null ? `(${Number(g.params).toFixed(2)})` : '';
+      return `<span class="gp ${cls}" title="${g.gate} on q${g.qubit}">${g.gate}${param}</span>`;
+    }).join('');
+
+    // ── Bloch Spheres ──
+    const ba = sa.bloch_angles || {};
+    if (_threeReady) {
+      if (!blochSpheres.q0) blochSpheres.q0 = createBlochSphere($('bloch0'));
+      if (!blochSpheres.q1) blochSpheres.q1 = createBlochSphere($('bloch1'));
+      if (ba.qubit_0) blochSpheres.q0.updateState(ba.qubit_0.theta);
+      if (ba.qubit_1) blochSpheres.q1.updateState(ba.qubit_1.theta);
+    } else {
+      if (ba.qubit_0) $('bloch0').innerHTML = blochSVGFallback(ba.qubit_0.theta, 'Qubit 0');
+      if (ba.qubit_1) $('bloch1').innerHTML = blochSVGFallback(ba.qubit_1.theta, 'Qubit 1');
+    }
+    if (ba.qubit_0) $('b0a').textContent = `θ = ${ba.qubit_0.description}`;
+    if (ba.qubit_1) $('b1a').textContent = `θ = ${ba.qubit_1.description}`;
+
+    // Entanglement
+    if (sa.entanglement_indicator != null) {
+      $('entBadge').style.display = 'inline-flex';
+      $('entVal').textContent = sa.entanglement_indicator.toFixed(4);
+    }
+
+    // ── Probability Bars ──
+    const probs = sa.probabilities || {};
+    const labels = ['00', '01', '10', '11'];
+    const pLabels = ['|00⟩', '|01⟩', '|10⟩', '|11⟩'];
+    let pbHTML = '';
+    labels.forEach((k, i) => {
+      const pct = ((probs[k] || 0) * 100).toFixed(1);
+      pbHTML += `<div class="prob-row">
+        <span class="prob-label">${pLabels[i]}</span>
+        <div class="prob-bg"><div class="prob-fill s${k}" style="width:0%" data-w="${pct}%"></div></div>
+        <span class="prob-pct">${pct}%</span></div>`;
+    });
+    $('probBars').innerHTML = pbHTML;
+    // Animate bars
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.prob-fill[data-w]').forEach(el => {
+        el.style.width = el.dataset.w;
+      });
+    });
+
+    // Input features
+    const feat = qr.input_features || {};
+    if (feat.amount_norm != null) {
+      $('featRow').style.display = 'flex';
+      $('fAmt').textContent = feat.amount_norm.toFixed(4);
+      $('fFreq').textContent = feat.freq_norm.toFixed(4);
+    }
+
+    // ── LLM ──
+    $('llmText').innerHTML = esc(j.llm_explanation || 'No explanation available.').replace(/\n/g, '<br>');
+
+  } catch (e) {
+    $('resHdr').innerHTML = `<div style="color:var(--red);padding:1rem">❌ Analysis failed: ${esc(e.message)}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '⚛ Analyze';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  RAG ASSISTANT
+// ══════════════════════════════════════════════════════════════════
+async function askRag() {
+  const inp = $('ragI'), q = inp.value.trim();
+  if (!q) return;
+  const chat = $('ragC');
+  chat.innerHTML += `<div class="msg user"><b style="color:var(--cyan)">You:</b> ${esc(q)}</div>`;
+  inp.value = '';
+  chat.scrollTop = 1e6;
+  try {
+    const res = await fetch('/api/rag/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q }),
+    });
+    const j = await res.json();
+    chat.innerHTML += `<div class="msg ai"><b style="color:var(--purple)">QuantGuard AI:</b><br>${esc(j.answer)}</div>`;
+  } catch (e) {
+    chat.innerHTML += `<div class="msg" style="color:var(--red)">Error: ${e.message}</div>`;
+  }
+  chat.scrollTop = 1e6;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  LIVE DATA SOURCE CONTROLS
+// ══════════════════════════════════════════════════════════════════
+let liveRunning = false;
+let liveStatusInterval = null;
+
+async function startLive() {
+  const src = $('liveSrc').value;
+  const interval = parseFloat($('liveInterval').value) || 1.0;
+  $('liveStartBtn').disabled = true;
+  try {
+    const res = await fetch('/api/live/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: src, interval }),
+    });
+    const j = await res.json();
+    if (j.status === 'started' || j.status === 'already_running') {
+      liveRunning = true;
+      $('liveDot').classList.add('on');
+      $('liveLabel').textContent = `Running (${src})`;
+      if (!liveStatusInterval) {
+        liveStatusInterval = setInterval(checkLiveStatus, 5000);
+      }
+    }
+  } catch (e) {
+    $('liveLabel').textContent = `Error: ${e.message}`;
+  }
+  $('liveStartBtn').disabled = false;
+}
+
+async function stopLive() {
+  try {
+    await fetch('/api/live/stop', { method: 'POST' });
+  } catch (_) {}
+  liveRunning = false;
+  $('liveDot').classList.remove('on');
+  $('liveLabel').textContent = 'Stopped';
+  if (liveStatusInterval) { clearInterval(liveStatusInterval); liveStatusInterval = null; }
+}
+
+async function checkLiveStatus() {
+  try {
+    const r = await (await fetch('/api/live/status')).json();
+    if (!r.running) {
+      liveRunning = false;
+      $('liveDot').classList.remove('on');
+      $('liveLabel').textContent = 'Stopped';
+    }
+  } catch (_) {}
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PATHWAY LLM xPACK — REPORTS & INSIGHTS
+// ══════════════════════════════════════════════════════════════════
+let selectedReport = 'executive_summary';
+
+function selectReport(el) {
+  document.querySelectorAll('.xpack-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  selectedReport = el.dataset.rtype;
+}
+
+async function generateReport() {
+  const btn = $('xpackGenBtn');
+  const out = $('xpackOut');
+  const status = $('xpackStatus');
+  btn.disabled = true;
+  status.textContent = 'Generating…';
+  out.textContent = '⏳ Generating AI report via Pathway LLM xPack…';
+  try {
+    const res = await fetch('/api/xpack/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ report_type: selectedReport }),
+    });
+    const j = await res.json();
+    out.textContent = j.content || 'No content returned';
+    status.textContent = `✅ Generated at ${new Date(j.generated_at).toLocaleTimeString()} (${j.data_points} data points)`;
+  } catch (e) {
+    out.textContent = `Error: ${e.message}`;
+    status.textContent = '❌ Failed';
+  }
+  btn.disabled = false;
+}
+
+async function generateCredit() {
+  const uid = $('creditUser').value.trim();
+  if (!uid) return;
+  const status = $('creditStatus');
+  const out = $('xpackOut');
+  status.textContent = 'Generating…';
+  try {
+    const res = await fetch('/api/xpack/credit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: uid }),
+    });
+    const j = await res.json();
+    out.textContent = `CREDIT DECISION: ${j.decision} (Risk Score: ${j.risk_score})\n\n${j.rationale}\n\nFactors:\n${(j.factors||[]).map(f => '  • ' + f).join('\n')}\n\nAlerts: ${j.alerts_count || 0}`;
+    status.textContent = `✅ Decision: ${j.decision}`;
+  } catch (e) {
+    out.textContent = `Error: ${e.message}`;
+    status.textContent = '❌ Failed';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Expose module-scoped functions to global scope for onclick handlers
+// ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+//  GREEN IMPACT TIMELINE CHART (Chart.js)
+// ══════════════════════════════════════════════════════════════════
+let impactChartInstance = null;
+
+async function loadImpactChart() {
+  try {
+    const res = await (await fetch('/api/impact/timeline')).json();
+    const tl = res.timeline || [];
+    const empty = $('chartEmpty');
+    if (!tl.length) { empty.style.display = 'flex'; return; }
+    empty.style.display = 'none';
+
+    const labels = tl.map(p => {
+      const d = new Date(p.time);
+      return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    });
+
+    const datasets = [
+      {
+        label: 'Funds Protected (₹L)',
+        data: tl.map(p => +(p.funds_protected_inr / 1e5).toFixed(2)),
+        borderColor: 'rgba(34,197,94,1)',
+        backgroundColor: 'rgba(34,197,94,0.08)',
+        fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Trees Equivalent',
+        data: tl.map(p => p.trees_equivalent),
+        borderColor: 'rgba(16,185,129,1)',
+        backgroundColor: 'rgba(16,185,129,0.06)',
+        fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2,
+        yAxisID: 'y1'
+      },
+      {
+        label: 'CO₂ Offset (kg)',
+        data: tl.map(p => p.co2_offset_kg),
+        borderColor: 'rgba(0,212,255,0.9)',
+        backgroundColor: 'rgba(0,212,255,0.05)',
+        fill: true, tension: 0.35, pointRadius: 2, borderWidth: 1.5,
+        yAxisID: 'y1'
+      },
+      {
+        label: 'Frauds Detected',
+        data: tl.map(p => p.frauds_detected),
+        borderColor: 'rgba(124,58,237,0.9)',
+        backgroundColor: 'rgba(124,58,237,0.05)',
+        fill: false, tension: 0.35, pointRadius: 3, borderWidth: 2,
+        borderDash: [4, 3],
+        yAxisID: 'y1'
+      },
+    ];
+
+    const cfg = {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: 'rgba(255,255,255,0.65)', font: { size: 10, family: 'Inter' }, boxWidth: 14, padding: 12 }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(5,5,16,0.92)',
+            titleColor: '#22c55e',
+            bodyColor: 'rgba(255,255,255,0.8)',
+            borderColor: 'rgba(34,197,94,0.2)',
+            borderWidth: 1,
+            padding: 10,
+            bodyFont: { family: 'JetBrains Mono', size: 11 }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: 'rgba(255,255,255,0.35)', font: { size: 9 }, maxRotation: 45, maxTicksLimit: 12 },
+            grid: { color: 'rgba(255,255,255,0.04)' }
+          },
+          y: {
+            type: 'linear', position: 'left',
+            title: { display: true, text: 'Funds (₹ Lakhs)', color: 'rgba(34,197,94,0.7)', font: { size: 10 } },
+            ticks: { color: 'rgba(34,197,94,0.6)', font: { size: 9 } },
+            grid: { color: 'rgba(34,197,94,0.06)' }
+          },
+          y1: {
+            type: 'linear', position: 'right',
+            title: { display: true, text: 'Trees / CO₂ / Frauds', color: 'rgba(0,212,255,0.7)', font: { size: 10 } },
+            ticks: { color: 'rgba(0,212,255,0.5)', font: { size: 9 } },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    };
+
+    if (impactChartInstance) {
+      impactChartInstance.data.labels = labels;
+      impactChartInstance.data.datasets.forEach((ds, i) => { ds.data = datasets[i].data; });
+      impactChartInstance.update('none');
+    } else {
+      impactChartInstance = new Chart($('impactChart'), cfg);
+    }
+  } catch (e) { /* retry on next interval */ }
+}
+
+window.startLive = startLive;
+window.stopLive = stopLive;
+window.selectReport = selectReport;
+window.generateReport = generateReport;
+window.generateCredit = generateCredit;
+window.doAnalyze = doAnalyze;
+window.askRag = askRag;
+window.toggleMethodology = toggleMethodology;
+
+</script>
+</body>
+</html>

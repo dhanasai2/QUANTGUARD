@@ -1,0 +1,36 @@
+REGULATORY COMPLIANCE FRAMEWORK FOR FINANCIAL TRANSACTIONS
+
+1. KNOW YOUR CUSTOMER (KYC) REQUIREMENTS
+- All users must complete identity verification before high-value transactions
+- Enhanced Due Diligence (EDD) required for Politically Exposed Persons (PEPs)
+- Customer risk profiles must be updated quarterly
+- Ongoing monitoring of customer transaction behavior against established profiles
+- Documentation requirements: Government ID, proof of address, source of funds
+
+2. ANTI-MONEY LAUNDERING (AML) PROTOCOLS
+- Suspicious Activity Reports (SARs) must be filed within 30 days of detection
+- Currency Transaction Reports (CTRs) for transactions exceeding $10,000
+- Structuring detection: Monitor for split transactions designed to avoid reporting thresholds
+- Record retention: All transaction records must be maintained for minimum 5 years
+- Cross-border wire transfers require additional screening and documentation
+
+3. PAYMENT CARD INDUSTRY (PCI) STANDARDS
+- Card data must be encrypted in transit and at rest using AES-256
+- Real-time fraud monitoring is mandatory for all card-present and card-not-present transactions
+- Chargebacks exceeding 1% trigger enhanced monitoring requirements
+- Tokenization required for stored card credentials
+- Regular security assessments and penetration testing mandatory
+
+4. REAL-TIME MONITORING REQUIREMENTS
+- All transactions must be screened within 100 milliseconds of initiation
+- High-risk transactions require secondary verification within 500 milliseconds
+- Alert escalation: Unresolved alerts must be escalated within 15 minutes
+- Audit trail: Complete transaction lifecycle must be logged with timestamps
+- System availability: Fraud detection must maintain 99.99% uptime
+
+5. DATA PROTECTION AND PRIVACY
+- Customer financial data classified as PII - GDPR and CCPA compliance required
+- Data minimization: Only collect necessary transaction attributes
+- Right to explanation: Customers can request explanation for flagged transactions
+- Cross-border data transfers require explicit compliance verification
+- Quantum-processed data must maintain equivalent encryption standards

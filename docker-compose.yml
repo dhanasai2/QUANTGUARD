@@ -1,0 +1,105 @@
+# ════════════════════════════════════════════════════════════════════════════
+#  QuantGuard — Docker Compose
+#  Quantum-Enhanced Fraud Detection for Green Bharat
+# ════════════════════════════════════════════════════════════════════════════
+#
+#  Services:
+#    quantguard      — Main API + Pathway streaming engine + dashboard
+#    kafka           — Kafka broker for ConnectorSubject ingestion
+#    zookeeper       — Kafka dependency
+#    kafka-producer  — Sidecar that publishes synthetic transactions to Kafka
+#
+#  Quick start:
+#    docker compose up --build       # Full stack: API + Kafka + producer
+#
+# ════════════════════════════════════════════════════════════════════════════
+
+services:
+  # ── Main Application ─────────────────────────────────────────────────
+  quantguard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quantguard-app
+    ports:
+      - "8000:8000"
+      - "9090:9090"
+    env_file:
+      - .env
+    environment:
+      - QUANTGUARD_HOST=0.0.0.0
+      - QUANTGUARD_PORT=8000
+      - PATHWAY_PERSISTENCE_DIR=/app/data/persistence
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    volumes:
+      # Persist alert data + Pathway state across restarts
+      - quantguard-data:/app/data
+      - quantguard-persistence:/app/data/persistence
+    restart: unless-stopped
+    depends_on:
+      kafka:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    networks:
+      - quantguard-net
+
+  # ── Zookeeper (Kafka dependency) ─────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: quantguard-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - quantguard-net
+
+  # ── Kafka Broker ─────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: quantguard-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - quantguard-net
+
+  # ── Kafka Producer Sidecar ───────────────────────────────────────────
+  #  Publishes synthetic fraud transactions to the quantguard-transactions
+  #  topic so the end-to-end Kafka pipeline is demonstrated out of the box.
+  kafka-producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quantguard-kafka-producer
+    entrypoint: ["python", "kafka_producer.py"]
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TOPIC=quantguard-transactions
+    depends_on:
+      kafka:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - quantguard-net
+
+volumes:
+  quantguard-data:
+    driver: local
+  quantguard-persistence:
+    driver: local
+
+networks:
+  quantguard-net:
+    driver: bridge

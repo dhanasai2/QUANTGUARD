@@ -1,0 +1,544 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a1a"/>
+      <stop offset="50%" stop-color="#0d1b2a"/>
+      <stop offset="100%" stop-color="#0a0a1a"/>
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#7b2ff7"/>
+    </linearGradient>
+    <linearGradient id="quantumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff006e"/>
+      <stop offset="100%" stop-color="#ff4da6"/>
+    </linearGradient>
+    <linearGradient id="llmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c853"/>
+      <stop offset="100%" stop-color="#69f0ae"/>
+    </linearGradient>
+    <linearGradient id="kafkaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6d00"/>
+      <stop offset="100%" stop-color="#ffab40"/>
+    </linearGradient>
+    <linearGradient id="pathwayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2979ff"/>
+      <stop offset="100%" stop-color="#82b1ff"/>
+    </linearGradient>
+    <linearGradient id="marketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd600"/>
+      <stop offset="100%" stop-color="#ffff00"/>
+    </linearGradient>
+    <linearGradient id="mcpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e040fb"/>
+      <stop offset="100%" stop-color="#ea80fc"/>
+    </linearGradient>
+    <linearGradient id="polygonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#18ffff"/>
+    </linearGradient>
+    <linearGradient id="dashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#76ff03"/>
+      <stop offset="100%" stop-color="#b2ff59"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="30%" stop-color="#7b2ff7"/>
+      <stop offset="60%" stop-color="#ff006e"/>
+      <stop offset="100%" stop-color="#00d4ff"/>
+      <animate attributeName="x1" values="0%;100%;0%" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="100%;200%;100%" dur="4s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#00d4ff" flood-opacity="0.6"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowPink" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#ff006e" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#00c853" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowOrange" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#ff6d00" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowBlue" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#2979ff" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowYellow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#ffd600" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowPurple" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#e040fb" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowTeal" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#00e5ff" flood-opacity="0.5"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="4"/>
+      <feFlood flood-color="#000" flood-opacity="0.4"/>
+      <feComposite in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="bigGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feFlood flood-color="#7b2ff7" flood-opacity="0.25"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Animated dash pattern for data flow lines -->
+    <style>
+      @keyframes dashFlow { to { stroke-dashoffset: -40; } }
+      @keyframes dashFlowReverse { to { stroke-dashoffset: 40; } }
+      @keyframes pulseNode { 0%,100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 1; transform: scale(1.03); } }
+      @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes particleFloat { 0% { opacity:0; } 15% { opacity:1; } 85% { opacity:1; } 100% { opacity:0; } }
+      @keyframes orbPulse { 0%,100% { r: 3; opacity: 0.7; } 50% { r: 5; opacity: 1; } }
+      .flow-line { stroke-dasharray: 12 8; animation: dashFlow 1.2s linear infinite; }
+      .flow-line-rev { stroke-dasharray: 12 8; animation: dashFlowReverse 1.2s linear infinite; }
+      .node-box { animation: pulseNode 3s ease-in-out infinite; }
+      .fade-in { animation: fadeInUp 0.8s ease-out both; }
+      .particle { animation: particleFloat 4s ease-in-out infinite; }
+      .orb { animation: orbPulse 2s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.04" stroke="#00d4ff" stroke-width="0.5">
+    <line x1="0" y1="0" x2="0" y2="900"/><line x1="50" y1="0" x2="50" y2="900"/>
+    <line x1="100" y1="0" x2="100" y2="900"/><line x1="150" y1="0" x2="150" y2="900"/>
+    <line x1="200" y1="0" x2="200" y2="900"/><line x1="250" y1="0" x2="250" y2="900"/>
+    <line x1="300" y1="0" x2="300" y2="900"/><line x1="350" y1="0" x2="350" y2="900"/>
+    <line x1="400" y1="0" x2="400" y2="900"/><line x1="450" y1="0" x2="450" y2="900"/>
+    <line x1="500" y1="0" x2="500" y2="900"/><line x1="550" y1="0" x2="550" y2="900"/>
+    <line x1="600" y1="0" x2="600" y2="900"/><line x1="650" y1="0" x2="650" y2="900"/>
+    <line x1="700" y1="0" x2="700" y2="900"/><line x1="750" y1="0" x2="750" y2="900"/>
+    <line x1="800" y1="0" x2="800" y2="900"/><line x1="850" y1="0" x2="850" y2="900"/>
+    <line x1="900" y1="0" x2="900" y2="900"/><line x1="950" y1="0" x2="950" y2="900"/>
+    <line x1="1000" y1="0" x2="1000" y2="900"/><line x1="1050" y1="0" x2="1050" y2="900"/>
+    <line x1="1100" y1="0" x2="1100" y2="900"/><line x1="1150" y1="0" x2="1150" y2="900"/>
+    <line x1="1200" y1="0" x2="1200" y2="900"/><line x1="1250" y1="0" x2="1250" y2="900"/>
+    <line x1="1300" y1="0" x2="1300" y2="900"/><line x1="1350" y1="0" x2="1350" y2="900"/>
+    <line x1="0" y1="50" x2="1400" y2="50"/><line x1="0" y1="100" x2="1400" y2="100"/>
+    <line x1="0" y1="150" x2="1400" y2="150"/><line x1="0" y1="200" x2="1400" y2="200"/>
+    <line x1="0" y1="250" x2="1400" y2="250"/><line x1="0" y1="300" x2="1400" y2="300"/>
+    <line x1="0" y1="350" x2="1400" y2="350"/><line x1="0" y1="400" x2="1400" y2="400"/>
+    <line x1="0" y1="450" x2="1400" y2="450"/><line x1="0" y1="500" x2="1400" y2="500"/>
+    <line x1="0" y1="550" x2="1400" y2="550"/><line x1="0" y1="600" x2="1400" y2="600"/>
+    <line x1="0" y1="650" x2="1400" y2="650"/><line x1="0" y1="700" x2="1400" y2="700"/>
+    <line x1="0" y1="750" x2="1400" y2="750"/><line x1="0" y1="800" x2="1400" y2="800"/>
+    <line x1="0" y1="850" x2="1400" y2="850"/>
+  </g>
+
+  <!-- Floating particles -->
+  <circle cx="120" cy="180" r="2" fill="#00d4ff" opacity="0" class="particle"><animate attributeName="cy" values="180;140;180" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="340" cy="720" r="1.5" fill="#ff006e" opacity="0" class="particle" style="animation-delay:1s"><animate attributeName="cy" values="720;680;720" dur="6s" repeatCount="indefinite"/></circle>
+  <circle cx="980" cy="200" r="2" fill="#7b2ff7" opacity="0" class="particle" style="animation-delay:2s"><animate attributeName="cy" values="200;160;200" dur="4.5s" repeatCount="indefinite"/></circle>
+  <circle cx="1250" cy="600" r="1.5" fill="#00c853" opacity="0" class="particle" style="animation-delay:0.5s"><animate attributeName="cy" values="600;560;600" dur="5.5s" repeatCount="indefinite"/></circle>
+  <circle cx="700" cy="120" r="2" fill="#ffd600" opacity="0" class="particle" style="animation-delay:3s"><animate attributeName="cy" values="120;85;120" dur="4s" repeatCount="indefinite"/></circle>
+  <circle cx="50" cy="450" r="1.5" fill="#e040fb" opacity="0" class="particle" style="animation-delay:1.5s"><animate attributeName="cy" values="450;420;450" dur="6.5s" repeatCount="indefinite"/></circle>
+  <circle cx="1350" cy="350" r="2" fill="#00e5ff" opacity="0" class="particle" style="animation-delay:2.5s"><animate attributeName="cy" values="350;310;350" dur="5s" repeatCount="indefinite"/></circle>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  TITLE                                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g class="fade-in" style="animation-delay: 0.1s">
+    <text x="700" y="52" text-anchor="middle" font-size="36" font-weight="800" fill="url(#titleGrad)" letter-spacing="3">
+      QUANTGUARD
+    </text>
+    <text x="700" y="76" text-anchor="middle" font-size="13" fill="#8892b0" letter-spacing="6" font-weight="300">
+      QUANTUM-ENHANCED REAL-TIME FRAUD DETECTION
+    </text>
+    <line x1="420" y1="88" x2="980" y2="88" stroke="url(#coreGrad)" stroke-width="1" opacity="0.3"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  DATA FLOW LINES (animated dashes)                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- Alpha Vantage → Core -->
+  <path d="M 220 240 C 320 240, 480 340, 580 390" fill="none" stroke="#ffd600" stroke-width="2" opacity="0.5" class="flow-line"/>
+  <!-- Polygon.io → Core -->
+  <path d="M 220 400 C 320 400, 420 400, 580 420" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.5" class="flow-line"/>
+  <!-- Kafka → Core -->
+  <path d="M 220 560 C 350 560, 450 480, 580 450" fill="none" stroke="#ff6d00" stroke-width="2" opacity="0.5" class="flow-line"/>
+
+  <!-- Core → IBM Quantum -->
+  <path d="M 820 370 C 920 340, 1000 260, 1100 240" fill="none" stroke="#ff006e" stroke-width="2" opacity="0.5" class="flow-line"/>
+  <!-- Core → Groq LLM -->
+  <path d="M 820 430 C 920 430, 1000 420, 1100 400" fill="none" stroke="#00c853" stroke-width="2" opacity="0.5" class="flow-line"/>
+  <!-- Core → MCP -->
+  <path d="M 820 460 C 920 500, 1000 540, 1100 560" fill="none" stroke="#e040fb" stroke-width="2" opacity="0.5" class="flow-line"/>
+
+  <!-- Core → Dashboard (down) -->
+  <path d="M 700 500 C 700 560, 700 620, 700 680" fill="none" stroke="url(#dashGrad)" stroke-width="2" opacity="0.5" class="flow-line"/>
+
+  <!-- Kafka return arrow (alerts) -->
+  <path d="M 580 470 C 450 520, 350 560, 220 580" fill="none" stroke="#ffab40" stroke-width="1.5" opacity="0.35" class="flow-line-rev"/>
+
+  <!-- Pathway wrapping core (subtle arc) -->
+  <path d="M 560 340 Q 700 290, 840 340" fill="none" stroke="#2979ff" stroke-width="1.5" opacity="0.25" class="flow-line"/>
+  <path d="M 560 510 Q 700 560, 840 510" fill="none" stroke="#2979ff" stroke-width="1.5" opacity="0.25" class="flow-line-rev"/>
+
+  <!-- Animated data orbs on flow lines -->
+  <circle r="4" fill="#ffd600" class="orb">
+    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 220 240 C 320 240, 480 340, 580 390"/>
+  </circle>
+  <circle r="4" fill="#00e5ff" class="orb" style="animation-delay:0.8s">
+    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 220 400 C 320 400, 420 400, 580 420"/>
+  </circle>
+  <circle r="4" fill="#ff6d00" class="orb" style="animation-delay:0.4s">
+    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 220 560 C 350 560, 450 480, 580 450"/>
+  </circle>
+  <circle r="4" fill="#ff006e" class="orb" style="animation-delay:1.2s">
+    <animateMotion dur="2s" repeatCount="indefinite" path="M 820 370 C 920 340, 1000 260, 1100 240"/>
+  </circle>
+  <circle r="4" fill="#00c853" class="orb" style="animation-delay:0.6s">
+    <animateMotion dur="2s" repeatCount="indefinite" path="M 820 430 C 920 430, 1000 420, 1100 400"/>
+  </circle>
+  <circle r="4" fill="#e040fb" class="orb" style="animation-delay:1.8s">
+    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 820 460 C 920 500, 1000 540, 1100 560"/>
+  </circle>
+  <circle r="4" fill="#76ff03" class="orb" style="animation-delay:0.3s">
+    <animateMotion dur="2s" repeatCount="indefinite" path="M 700 500 C 700 560, 700 620, 700 680"/>
+  </circle>
+  <!-- Return orb (alerts → Kafka) -->
+  <circle r="3" fill="#ffab40" opacity="0.7">
+    <animateMotion dur="3s" repeatCount="indefinite" path="M 580 470 C 450 520, 350 560, 220 580"/>
+  </circle>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  LEFT COLUMN — DATA SOURCES (3 nodes)                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- ① Alpha Vantage -->
+  <g class="node-box fade-in" style="animation-delay:0.2s" filter="url(#softShadow)">
+    <rect x="60" y="190" width="160" height="100" rx="14" fill="#1a1a2e" stroke="#ffd600" stroke-width="1.5" opacity="0.92"/>
+    <rect x="60" y="190" width="160" height="100" rx="14" fill="url(#marketGrad)" opacity="0.08"/>
+    <!-- Icon: chart -->
+    <g transform="translate(100, 210)">
+      <polyline points="0,22 8,10 16,16 24,4" fill="none" stroke="#ffd600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="24" cy="4" r="3" fill="#ffd600" opacity="0.8"/>
+    </g>
+    <text x="140" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#ffd600">Alpha Vantage</text>
+    <text x="140" y="250" text-anchor="middle" font-size="10" fill="#8892b0">REST Market Data</text>
+    <text x="140" y="268" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">AAPL MSFT GOOGL JPM</text>
+    <circle cx="222" cy="240" r="6" fill="#ffd600" opacity="0.15" filter="url(#glowYellow)">
+      <animate attributeName="r" values="6;9;6" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ② Polygon.io -->
+  <g class="node-box fade-in" style="animation-delay:0.35s" filter="url(#softShadow)">
+    <rect x="60" y="350" width="160" height="100" rx="14" fill="#1a1a2e" stroke="#00e5ff" stroke-width="1.5" opacity="0.92"/>
+    <rect x="60" y="350" width="160" height="100" rx="14" fill="url(#polygonGrad)" opacity="0.08"/>
+    <!-- Icon: websocket signal -->
+    <g transform="translate(98, 370)">
+      <path d="M4,18 Q14,0 24,18" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.5"/>
+      <path d="M8,16 Q14,4 20,16" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.7"/>
+      <path d="M11,14 Q14,8 17,14" fill="none" stroke="#00e5ff" stroke-width="2.5"/>
+    </g>
+    <text x="140" y="392" text-anchor="middle" font-size="14" font-weight="700" fill="#00e5ff">Polygon.io</text>
+    <text x="140" y="412" text-anchor="middle" font-size="10" fill="#8892b0">WebSocket Trades</text>
+    <text x="140" y="430" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">Real-time streaming</text>
+    <circle cx="222" cy="400" r="6" fill="#00e5ff" opacity="0.15" filter="url(#glowTeal)">
+      <animate attributeName="r" values="6;9;6" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ③ Apache Kafka -->
+  <g class="node-box fade-in" style="animation-delay:0.5s" filter="url(#softShadow)">
+    <rect x="60" y="510" width="160" height="110" rx="14" fill="#1a1a2e" stroke="#ff6d00" stroke-width="1.5" opacity="0.92"/>
+    <rect x="60" y="510" width="160" height="110" rx="14" fill="url(#kafkaGrad)" opacity="0.08"/>
+    <!-- Icon: Kafka arrows -->
+    <g transform="translate(95, 530)">
+      <line x1="0" y1="12" x2="30" y2="12" stroke="#ff6d00" stroke-width="2"/>
+      <polygon points="26,7 34,12 26,17" fill="#ff6d00"/>
+      <line x1="30" y1="4" x2="0" y2="4" stroke="#ffab40" stroke-width="1.5" opacity="0.6"/>
+      <polygon points="4,0 -2,4 4,8" fill="#ffab40" opacity="0.6"/>
+    </g>
+    <text x="140" y="555" text-anchor="middle" font-size="14" font-weight="700" fill="#ff6d00">Apache Kafka</text>
+    <text x="140" y="575" text-anchor="middle" font-size="10" fill="#8892b0">pw.io.kafka.read</text>
+    <text x="140" y="592" text-anchor="middle" font-size="10" fill="#ffab40">pw.io.kafka.write</text>
+    <text x="140" y="607" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">Closed loop ↔</text>
+    <circle cx="222" cy="560" r="6" fill="#ff6d00" opacity="0.15" filter="url(#glowOrange)">
+      <animate attributeName="r" values="6;9;6" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  CENTER — CORE ENGINE (Pathway Streaming)               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- Pathway outer ring -->
+  <g class="fade-in" style="animation-delay:0.3s">
+    <rect x="540" y="310" width="320" height="200" rx="22" fill="none" stroke="#2979ff" stroke-width="2" opacity="0.25" stroke-dasharray="6 4">
+      <animate attributeName="stroke-opacity" values="0.15;0.35;0.15" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <text x="700" y="330" text-anchor="middle" font-size="10" fill="#2979ff" font-weight="600" letter-spacing="2" opacity="0.6">PATHWAY STREAMING ENGINE</text>
+  </g>
+
+  <!-- Core box -->
+  <g class="node-box fade-in" style="animation-delay:0.4s" filter="url(#bigGlow)">
+    <rect x="570" y="345" width="260" height="155" rx="18" fill="#12122a" stroke="url(#coreGrad)" stroke-width="2"/>
+    <rect x="570" y="345" width="260" height="155" rx="18" fill="url(#coreGrad)" opacity="0.06"/>
+
+    <!-- Quantum circuit mini-icon -->
+    <g transform="translate(590, 360)">
+      <line x1="0" y1="8" x2="50" y2="8" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+      <line x1="0" y1="22" x2="50" y2="22" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+      <rect x="8" y="2" width="14" height="12" rx="2" fill="none" stroke="#7b2ff7" stroke-width="1.5"/>
+      <text x="15" y="11" text-anchor="middle" font-size="7" fill="#7b2ff7" font-weight="700">H</text>
+      <rect x="28" y="16" width="14" height="12" rx="2" fill="none" stroke="#ff006e" stroke-width="1.5"/>
+      <text x="35" y="25" text-anchor="middle" font-size="7" fill="#ff006e" font-weight="700">Ry</text>
+      <circle cx="35" cy="8" r="3" fill="none" stroke="#00d4ff" stroke-width="1"/>
+      <line x1="35" y1="11" x2="35" y2="16" stroke="#00d4ff" stroke-width="1"/>
+    </g>
+
+    <text x="700" y="380" text-anchor="middle" font-size="18" font-weight="800" fill="#ffffff" letter-spacing="1">QuantGuard Core</text>
+    <text x="700" y="400" text-anchor="middle" font-size="10" fill="#00d4ff" font-weight="500">9-Stage Fraud Detection Pipeline</text>
+
+    <!-- Pipeline stages mini -->
+    <g transform="translate(588, 415)" font-size="9" fill="#8892b0">
+      <rect x="0" y="0" width="232" height="1" fill="#2a2a4a"/>
+      <text x="0" y="16">① Ingest</text>
+      <text x="48" y="16" fill="#5a6380">→</text>
+      <text x="58" y="16">② Features</text>
+      <text x="115" y="16" fill="#5a6380">→</text>
+      <text x="125" y="16">③ Window(60s)</text>
+      <text x="0" y="34">④ Anomaly</text>
+      <text x="55" y="34" fill="#5a6380">→</text>
+      <text x="65" y="34" fill="#ff006e">⑤ Quantum VQC</text>
+      <text x="150" y="34" fill="#5a6380">→</text>
+      <text x="160" y="34" fill="#00c853">⑥ LLM/RAG</text>
+      <text x="0" y="52">⑦ ML Scoring (6-feat)</text>
+      <text x="116" y="52" fill="#5a6380">→</text>
+      <text x="126" y="52" fill="#76ff03">⑧ Alerts</text>
+      <text x="178" y="52" fill="#5a6380">→</text>
+      <text x="188" y="52" fill="#ffd600">⑨ Sink</text>
+    </g>
+
+    <!-- Persist badge -->
+    <g transform="translate(593, 478)">
+      <rect x="0" y="0" width="82" height="16" rx="8" fill="#2979ff" opacity="0.2"/>
+      <text x="41" y="11" text-anchor="middle" font-size="8" fill="#82b1ff" font-weight="600">Persistence ✓</text>
+    </g>
+    <g transform="translate(683, 478)">
+      <rect x="0" y="0" width="82" height="16" rx="8" fill="#7b2ff7" opacity="0.2"/>
+      <text x="41" y="11" text-anchor="middle" font-size="8" fill="#b388ff" font-weight="600">Exactly-Once</text>
+    </g>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  RIGHT COLUMN — AI / PROTOCOL (3 nodes)                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- ④ IBM Quantum -->
+  <g class="node-box fade-in" style="animation-delay:0.55s" filter="url(#softShadow)">
+    <rect x="1100" y="190" width="220" height="105" rx="14" fill="#1a1a2e" stroke="#ff006e" stroke-width="1.5" opacity="0.92"/>
+    <rect x="1100" y="190" width="220" height="105" rx="14" fill="url(#quantumGrad)" opacity="0.08"/>
+    <!-- Bloch sphere icon -->
+    <g transform="translate(1120, 206)">
+      <circle cx="16" cy="16" r="14" fill="none" stroke="#ff006e" stroke-width="1.2" opacity="0.5"/>
+      <ellipse cx="16" cy="16" rx="14" ry="5" fill="none" stroke="#ff4da6" stroke-width="0.8" opacity="0.4"/>
+      <line x1="16" y1="2" x2="16" y2="30" stroke="#ff006e" stroke-width="0.8" opacity="0.4"/>
+      <line x1="16" y1="16" x2="26" y2="9" stroke="#ff006e" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="26" cy="9" r="3" fill="#ff006e"/>
+    </g>
+    <text x="1210" y="228" text-anchor="middle" font-size="15" font-weight="700" fill="#ff006e">IBM Quantum</text>
+    <text x="1210" y="248" text-anchor="middle" font-size="10" fill="#8892b0">2-Qubit VQC · ibm_torino</text>
+    <text x="1210" y="265" text-anchor="middle" font-size="10" fill="#ff4da6">SamplerV2 + Simulator</text>
+    <text x="1210" y="282" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">P(|1⟩) → FRAUD/SAFE</text>
+    <circle cx="1098" cy="240" r="6" fill="#ff006e" opacity="0.15" filter="url(#glowPink)">
+      <animate attributeName="r" values="6;9;6" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ⑤ Groq LLM -->
+  <g class="node-box fade-in" style="animation-delay:0.7s" filter="url(#softShadow)">
+    <rect x="1100" y="345" width="220" height="105" rx="14" fill="#1a1a2e" stroke="#00c853" stroke-width="1.5" opacity="0.92"/>
+    <rect x="1100" y="345" width="220" height="105" rx="14" fill="url(#llmGrad)" opacity="0.08"/>
+    <!-- Brain icon -->
+    <g transform="translate(1120, 360)">
+      <path d="M8,28 C0,22 0,12 8,8 C12,2 22,2 26,8 C34,12 34,22 26,28 C22,32 12,32 8,28Z" fill="none" stroke="#00c853" stroke-width="1.5" opacity="0.7"/>
+      <path d="M14,10 Q17,18 14,26" fill="none" stroke="#69f0ae" stroke-width="1" opacity="0.5"/>
+      <path d="M20,10 Q17,18 20,26" fill="none" stroke="#69f0ae" stroke-width="1" opacity="0.5"/>
+      <line x1="8" y1="18" x2="26" y2="18" stroke="#69f0ae" stroke-width="1" opacity="0.5"/>
+    </g>
+    <text x="1210" y="385" text-anchor="middle" font-size="15" font-weight="700" fill="#00c853">Groq LLM</text>
+    <text x="1210" y="405" text-anchor="middle" font-size="10" fill="#8892b0">llama-3.3-70b-versatile</text>
+    <text x="1210" y="422" text-anchor="middle" font-size="10" fill="#69f0ae">Hybrid RAG (0.7s + 0.3k)</text>
+    <text x="1210" y="439" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">DocumentStore + BruteForceKnn</text>
+    <circle cx="1098" cy="400" r="6" fill="#00c853" opacity="0.15" filter="url(#glowGreen)">
+      <animate attributeName="r" values="6;9;6" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ⑥ MCP Protocol -->
+  <g class="node-box fade-in" style="animation-delay:0.85s" filter="url(#softShadow)">
+    <rect x="1100" y="510" width="220" height="100" rx="14" fill="#1a1a2e" stroke="#e040fb" stroke-width="1.5" opacity="0.92"/>
+    <rect x="1100" y="510" width="220" height="100" rx="14" fill="url(#mcpGrad)" opacity="0.08"/>
+    <!-- Protocol icon -->
+    <g transform="translate(1122, 528)">
+      <rect x="0" y="4" width="10" height="18" rx="2" fill="none" stroke="#e040fb" stroke-width="1.5"/>
+      <rect x="20" y="4" width="10" height="18" rx="2" fill="none" stroke="#ea80fc" stroke-width="1.5"/>
+      <line x1="10" y1="10" x2="20" y2="10" stroke="#e040fb" stroke-width="1.5"/>
+      <line x1="10" y1="16" x2="20" y2="16" stroke="#ea80fc" stroke-width="1.5"/>
+    </g>
+    <text x="1210" y="550" text-anchor="middle" font-size="15" font-weight="700" fill="#e040fb">MCP Server</text>
+    <text x="1210" y="570" text-anchor="middle" font-size="10" fill="#8892b0">JSON-RPC 2.0 Protocol</text>
+    <text x="1210" y="587" text-anchor="middle" font-size="10" fill="#ea80fc">3 Tools · 2 Resources</text>
+    <text x="1210" y="601" text-anchor="middle" font-size="9" fill="#5a6380" font-style="italic">Claude / Copilot / Agents</text>
+    <circle cx="1098" cy="560" r="6" fill="#e040fb" opacity="0.15" filter="url(#glowPurple)">
+      <animate attributeName="r" values="6;9;6" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  BOTTOM — Output (Dashboard)                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- ⑦ Dashboard + API -->
+  <g class="node-box fade-in" style="animation-delay:0.9s" filter="url(#softShadow)">
+    <rect x="530" y="690" width="340" height="120" rx="16" fill="#1a1a2e" stroke="#76ff03" stroke-width="1.5" opacity="0.92"/>
+    <rect x="530" y="690" width="340" height="120" rx="16" fill="url(#dashGrad)" opacity="0.06"/>
+    <!-- Monitor icon -->
+    <g transform="translate(548, 704)">
+      <rect x="0" y="0" width="30" height="20" rx="3" fill="none" stroke="#76ff03" stroke-width="1.5"/>
+      <line x1="10" y1="20" x2="10" y2="26" stroke="#76ff03" stroke-width="1.5"/>
+      <line x1="20" y1="20" x2="20" y2="26" stroke="#76ff03" stroke-width="1.5"/>
+      <line x1="6" y1="26" x2="24" y2="26" stroke="#76ff03" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Mini chart bars -->
+      <rect x="4" y="12" width="4" height="6" fill="#76ff03" opacity="0.4"/>
+      <rect x="10" y="8" width="4" height="10" fill="#76ff03" opacity="0.6"/>
+      <rect x="16" y="5" width="4" height="13" fill="#76ff03" opacity="0.8"/>
+      <rect x="22" y="10" width="4" height="8" fill="#76ff03" opacity="0.5"/>
+    </g>
+    <text x="700" y="722" text-anchor="middle" font-size="16" font-weight="700" fill="#76ff03">Dashboard + FastAPI</text>
+    <text x="700" y="742" text-anchor="middle" font-size="10" fill="#8892b0">Three.js Bloch Spheres · Chart.js · WebSocket Live Feed</text>
+
+    <!-- API badges -->
+    <g transform="translate(560, 755)">
+      <rect x="0" y="0" width="62" height="18" rx="9" fill="#76ff03" opacity="0.12"/>
+      <text x="31" y="13" text-anchor="middle" font-size="8" fill="#b2ff59" font-weight="600">25+ APIs</text>
+    </g>
+    <g transform="translate(630, 755)">
+      <rect x="0" y="0" width="62" height="18" rx="9" fill="#00d4ff" opacity="0.12"/>
+      <text x="31" y="13" text-anchor="middle" font-size="8" fill="#00d4ff" font-weight="600">WebSocket</text>
+    </g>
+    <g transform="translate(700, 755)">
+      <rect x="0" y="0" width="72" height="18" rx="9" fill="#ffd600" opacity="0.12"/>
+      <text x="36" y="13" text-anchor="middle" font-size="8" fill="#ffd600" font-weight="600">Green Bharat</text>
+    </g>
+    <g transform="translate(780, 755)">
+      <rect x="0" y="0" width="72" height="18" rx="9" fill="#7b2ff7" opacity="0.12"/>
+      <text x="36" y="13" text-anchor="middle" font-size="8" fill="#b388ff" font-weight="600">RAGAS Eval</text>
+    </g>
+
+    <text x="700" y="800" text-anchor="middle" font-size="10" fill="#5a6380">
+      41+ Tests · Docker Compose · Persistence · Exactly-Once Semantics
+    </text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  LABELS on flow lines                                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+
+  <!-- Left labels -->
+  <g font-size="8" fill="#5a6380" font-style="italic" opacity="0.8">
+    <text x="370" y="275" transform="rotate(-12, 370, 275)">REST quotes</text>
+    <text x="380" y="395">WS trades</text>
+    <text x="370" y="530" transform="rotate(10, 370, 530)">librdkafka</text>
+    <text x="360" y="555" transform="rotate(8, 360, 555)" fill="#ffab40">← alerts</text>
+  </g>
+
+  <!-- Right labels -->
+  <g font-size="8" fill="#5a6380" font-style="italic" opacity="0.8">
+    <text x="960" y="305" transform="rotate(-10, 960, 305)">2-qubit VQC</text>
+    <text x="975" y="418">RAG context</text>
+    <text x="960" y="530" transform="rotate(10, 960, 530)">JSON-RPC</text>
+  </g>
+
+  <!-- Bottom label -->
+  <text x="720" y="660" text-anchor="middle" font-size="8" fill="#5a6380" font-style="italic" opacity="0.8">enriched alerts + live feed</text>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  LEGEND (bottom-left)                                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g class="fade-in" style="animation-delay:1s" transform="translate(40, 700)">
+    <text x="0" y="0" font-size="10" fill="#5a6380" font-weight="600" letter-spacing="1.5">INTEGRATIONS</text>
+    <circle cx="8" cy="18" r="4" fill="#ffd600"/><text x="18" y="22" font-size="9" fill="#8892b0">Alpha Vantage</text>
+    <circle cx="8" cy="36" r="4" fill="#00e5ff"/><text x="18" y="40" font-size="9" fill="#8892b0">Polygon.io</text>
+    <circle cx="8" cy="54" r="4" fill="#ff6d00"/><text x="18" y="58" font-size="9" fill="#8892b0">Apache Kafka</text>
+    <circle cx="8" cy="72" r="4" fill="#2979ff"/><text x="18" y="76" font-size="9" fill="#8892b0">Pathway Engine</text>
+    <circle cx="118" cy="18" r="4" fill="#ff006e"/><text x="128" y="22" font-size="9" fill="#8892b0">IBM Quantum</text>
+    <circle cx="118" cy="36" r="4" fill="#00c853"/><text x="128" y="40" font-size="9" fill="#8892b0">Groq LLM</text>
+    <circle cx="118" cy="54" r="4" fill="#e040fb"/><text x="128" y="58" font-size="9" fill="#8892b0">MCP Protocol</text>
+    <circle cx="118" cy="72" r="4" fill="#76ff03"/><text x="128" y="76" font-size="9" fill="#8892b0">Dashboard</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!--  PATHWAY badge (top-right)                              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <g class="fade-in" style="animation-delay:0.6s" transform="translate(1195, 110)">
+    <rect x="0" y="0" width="165" height="60" rx="12" fill="#12122a" stroke="#2979ff" stroke-width="1" opacity="0.6"/>
+    <text x="82" y="20" text-anchor="middle" font-size="9" fill="#2979ff" font-weight="600" letter-spacing="1">POWERED BY</text>
+    <text x="82" y="40" text-anchor="middle" font-size="16" font-weight="800" fill="#82b1ff" letter-spacing="2">PATHWAY</text>
+    <text x="82" y="53" text-anchor="middle" font-size="8" fill="#5a6380">Rust Engine · Exactly-Once</text>
+  </g>
+
+  <!-- Tech stack badge (top-left) -->
+  <g class="fade-in" style="animation-delay:0.6s" transform="translate(40, 110)">
+    <rect x="0" y="0" width="165" height="60" rx="12" fill="#12122a" stroke="#7b2ff7" stroke-width="1" opacity="0.6"/>
+    <text x="82" y="20" text-anchor="middle" font-size="9" fill="#7b2ff7" font-weight="600" letter-spacing="1">TECH STACK</text>
+    <text x="82" y="37" text-anchor="middle" font-size="9" fill="#8892b0">Python · FastAPI · Qiskit</text>
+    <text x="82" y="53" text-anchor="middle" font-size="9" fill="#8892b0">Docker · NumPy · Groq</text>
+  </g>
+
+  <!-- Metrics badge (bottom-right) -->
+  <g class="fade-in" style="animation-delay:1.1s" transform="translate(1100, 690)">
+    <rect x="0" y="0" width="220" height="100" rx="12" fill="#12122a" stroke="#5a6380" stroke-width="0.8" opacity="0.5"/>
+    <text x="110" y="20" text-anchor="middle" font-size="9" fill="#5a6380" font-weight="600" letter-spacing="1.5">PROJECT METRICS</text>
+    <text x="20" y="40" font-size="10" fill="#00d4ff" font-weight="700">9,000+</text>
+    <text x="80" y="40" font-size="9" fill="#8892b0">lines of code</text>
+    <text x="20" y="58" font-size="10" fill="#ff006e" font-weight="700">41+</text>
+    <text x="50" y="58" font-size="9" fill="#8892b0">tests (Quantum + ML + API)</text>
+    <text x="20" y="76" font-size="10" fill="#00c853" font-weight="700">7</text>
+    <text x="34" y="76" font-size="9" fill="#8892b0">real-time integrations</text>
+    <text x="20" y="92" font-size="10" fill="#ffd600" font-weight="700">4</text>
+    <text x="34" y="92" font-size="9" fill="#8892b0">RAGAS evaluation metrics</text>
+  </g>
+
+</svg>
