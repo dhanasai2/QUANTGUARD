@@ -1075,7 +1075,8 @@ function createGauge(prob) {
 //  WEBSOCKET
 // ══════════════════════════════════════════════════════════════════
 function connectWS() {
-  ws = new WebSocket(`ws://${location.host}/ws`);
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(`${proto}//${location.host}/ws`);
   ws.onopen = () => { $('wsDot').classList.add('ok'); $('wsLbl').textContent = 'Live'; };
   ws.onclose = () => { $('wsDot').classList.remove('ok'); $('wsLbl').textContent = 'Reconnecting…'; setTimeout(connectWS, 3000); };
   ws.onmessage = e => {
