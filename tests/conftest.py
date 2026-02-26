@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 @pytest.fixture(scope="session")
 def quantum_simulator():
     """Session-scoped numpy QuantumSimulator instance."""
-    from quantum_classifier import QuantumSimulator
-    return QuantumSimulator(num_qubits=2)
+    from quantum_classifier import QiskitSimulator
+    return QiskitSimulator(num_qubits=2)
 
 
 @pytest.fixture(scope="session")

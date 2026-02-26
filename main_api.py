@@ -124,8 +124,8 @@ async def lifespan(application):
             print(f"[API] Alpha Vantage auto-start failed: {_av_err}")
     else:
         print("[API] Set ALPHA_VANTAGE_API_KEY for real-time market data ingestion")
-    print("[API] QuantGuard API running  →  http://localhost:8000")
-    print("[API] Swagger docs           →  http://localhost:8000/docs")
+    print("[API] QuantGuard API running  =>  http://localhost:8000")
+    print("[API] Swagger docs           =>  http://localhost:8000/docs")
     yield
     # ── Shutdown ────────────────────────────────────────────────────────
     print("[API] Shutting down…")

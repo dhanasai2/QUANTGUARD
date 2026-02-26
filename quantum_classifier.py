@@ -172,7 +172,7 @@ class QuantumRiskClassifier:
 
     def __init__(self):
         self.num_qubits = 2
-        self.sim = QuantumSimulator(self.num_qubits)
+        self.sim = QiskitSimulator(self.num_qubits)
 
         # Pre-optimised variational parameters
         # Trained via COBYLA (500 iter) on synthetic labelled data
