@@ -4,65 +4,57 @@ A real-time fraud detection system combining streaming pipelines, statistical an
 
 ---
 
-1. Overview
+Overview
 
-QuantGuard is designed to detect fraudulent financial transactions in real time using a layered architecture. Unlike traditional batch-based systems, it processes events as they arrive and produces immediate risk assessments.
+QuantGuard processes financial transactions in real time and detects fraud using a layered architecture.
 
-The system integrates distributed streaming, adaptive anomaly detection, quantum-enhanced classification, and language-model-based explanations to provide both detection and interpretability.
+Unlike batch-based systems, it evaluates transactions as they arrive and produces immediate risk assessments.
 
 ---
 
-2. System Architecture
+Architecture
 
-Architecture Diagram
+System Diagram
 
 "System Architecture" (./assets/architecture.png)
 
-Data Flow Overview
+Data Flow
 
 Data Source
-   │
-   ▼
+   ↓
 Streaming Engine (Pathway / Kafka)
-   │
-   ▼
+   ↓
 ML Anomaly Scoring
-   │
-   ▼
+   ↓
 Quantum Classification (Qiskit)
-   │
-   ▼
+   ↓
 LLM Analysis (RAG)
-   │
-   ▼
+   ↓
 API Layer (FastAPI)
-   │
-   ▼
+   ↓
 Dashboard (WebSocket UI)
 
 ---
 
-3. Core Components
+Core Components
 
-3.1 Data Ingestion
+Data Ingestion
 
 - Synthetic transaction generator
-- Live data streams (configurable sources)
+- Live data streams
 - Kafka-based ingestion
 
 ---
 
-3.2 Streaming Engine
+Streaming Engine
 
-- Real-time processing pipeline
+- Real-time processing
 - Rolling user statistics
-- Event routing and enrichment
+- Event routing
 
 ---
 
-3.3 Machine Learning Layer
-
-Adaptive anomaly detection based on user behavior:
+Machine Learning Layer
 
 - Z-score deviation
 - Interquartile range (IQR)
@@ -71,35 +63,33 @@ Adaptive anomaly detection based on user behavior:
 - Spending ratio
 - Location entropy
 
-Only high-risk transactions proceed to deeper analysis.
+---
+
+Quantum Classification
+
+- Variational Quantum Circuit (VQC)
+- IBM Quantum + simulator support
+- Binary classification (fraud / safe)
 
 ---
 
-3.4 Quantum Classification
+LLM Analysis
 
-- Variational Quantum Circuit (VQC) model
-- Supports IBM Quantum hardware and local simulation
-- Binary classification: fraud vs safe
-
----
-
-3.5 LLM-Based Explanation
-
-- Context-aware explanations for flagged transactions
-- Retrieval over policy and compliance documents
-- Provides interpretable reasoning
+- Context-aware explanations
+- Retrieval from policy documents
+- Explainable outputs
 
 ---
 
-3.6 API and Dashboard
+API and Dashboard
 
-- FastAPI-based backend
-- WebSocket-based real-time updates
-- Visualization of transactions and alerts
+- FastAPI backend
+- WebSocket real-time updates
+- Visualization interface
 
 ---
 
-4. Technology Stack
+Technology Stack
 
 Backend
 
@@ -120,7 +110,7 @@ Infrastructure
 
 ---
 
-5. Project Structure
+Project Structure
 
 QuantGuard/
 ├── data_source.py
@@ -140,27 +130,31 @@ QuantGuard/
 
 ---
 
-6. Running the System
+Running the System
 
-6.1 Local Setup
+Setup
 
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 
-6.2 Start Services
+---
+
+Start Services
 
 python data_source.py
 python pathway_engine.py
 python main_api.py
 
-6.3 Access Dashboard
+---
+
+Open Dashboard
 
 http://localhost:8000
 
 ---
 
-7. Docker Deployment
+Docker
 
 docker build -t quantguard .
 docker run -p 8000:8000 --env-file .env quantguard
@@ -171,46 +165,37 @@ docker compose up --build
 
 ---
 
-8. API Overview
+API Endpoints
 
 Method| Endpoint| Description
 GET| /| Dashboard
 GET| /api/stats| System metrics
 GET| /api/alerts| Fraud alerts
-GET| /api/transactions| Transaction stream
-POST| /api/analyze| On-demand analysis
+GET| /api/transactions| Transactions
+POST| /api/analyze| Analysis
 WS| /ws| Real-time updates
 
 ---
 
-9. System Characteristics
+Key Characteristics
 
-- Real-time event processing
+- Real-time processing
 - Modular architecture
-- Scalable streaming pipeline
-- Hybrid ML + quantum approach
-- Explainable outputs via LLM
+- Scalable pipeline
+- ML + Quantum hybrid
+- Explainable outputs
 
 ---
 
-10. Limitations
+Limitations
 
-- Quantum model operates on low-dimensional features
-- Performance depends on data quality and feature engineering
-- Designed for experimentation and demonstration
-
----
-
-11. Future Work
-
-- Improved anomaly detection models
-- Expanded quantum feature space
-- Distributed deployment at scale
-- Advanced explainability and reporting
+- Quantum model uses low-dimensional features
+- Performance depends on data quality
+- Designed for experimentation
 
 ---
 
-12. Author
+Author
 
 Gundumogula Dhana Sai
 B.Tech Information Technology
