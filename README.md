@@ -16,7 +16,9 @@ Architecture
 
 System Diagram
 
-"System Architecture" (./assets/architecture.png)
+"System Architecture" (assets/architecture.png)
+
+---
 
 Data Flow
 
@@ -182,7 +184,7 @@ Key Characteristics
 - Real-time processing
 - Modular architecture
 - Scalable pipeline
-- ML + Quantum hybrid
+- ML + quantum hybrid
 - Explainable outputs
 
 ---
